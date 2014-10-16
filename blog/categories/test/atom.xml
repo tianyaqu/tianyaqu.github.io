@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: test | When Winter Falls]]></title>
+  <link href="http://tianyaqu.github.com/tianyaqu/blog/categories/test/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.github.com/tianyaqu/"/>
+  <updated>2014-10-16T12:48:30+08:00</updated>
+  <id>http://tianyaqu.github.com/tianyaqu/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[a test post]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post/"/>
+    <updated>2013-09-08T16:47:46+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post</id>
+    <content type="html"><![CDATA[<p>some thing to write.</p>
+
+
+<p>"测试中文"，效果还行。</p>
+
+
+<p>爱因斯坦提出了质能方程：<script type="math/tex">E=mc^2</script>.他是一个伟大的物理学家.</p>
+
+
+<p>game over.</p>
+]]></content>
+  </entry>
+  
+</feed>

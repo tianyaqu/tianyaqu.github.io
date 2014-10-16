@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[When Winter Falls]]></title>
+  <link href="http://tianyaqu.github.com/tianyaqu/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.github.com/tianyaqu/"/>
+  <updated>2014-10-16T12:48:30+08:00</updated>
+  <id>http://tianyaqu.github.com/tianyaqu/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Legolas 究竟能看多远？]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/10/01/how-far-can-Legolas-see/"/>
+    <updated>2014-10-01T04:54:40+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/10/01/how-far-can-Legolas-see</id>
+    <content type="html"><![CDATA[<p>指环王的设定中，精灵族被描述为英俊潇洒、武功高强、视力敏锐的类人类（human-like）形象。别的不说，但就视力敏锐这一项，就让人望不可及。在护戒小分队中，精灵王子 Legolas 扮演侦察员的角色，经常留意远处突然出现的危险。“the Riders of Rohan”一章中，Legolas 在 5 leagues（约24km。 1 leaue等于3mile,1 mile 约1.6km）开外就发现了 Rohan 的骑兵队伍，不仅看清他们的发色、装备、人数，还从中认出了对方的指挥官。多么了不起的眼力！ Legolas 真能看那么远么？</p>
+
+<!--more-->
+
+
+<p>这里就要引入一个概念：艾里斑（Airy disk）。学术来讲，就是光束通过一个圆形孔径的镜头所能得到的最好光点的描述。因为光作为一种电磁波，在通过狭缝时候会发生衍射，这样会得到一个明亮的中心与外部明暗交替的圆环。这个中心就被称为艾里斑（airy disk），它与周边的圆环一道被叫做艾里图（airy pattern）。他们都得名于George Biddell Airy，因为他对这一现象做了理论解释。</p>
+
+<p>艾里斑可以看作是对原目标点的模糊，因为光线的衍射会丧失一部分细节。如果有两个点距离很近，他们通过透镜后的艾里斑的边缘圆环重合的时候，就无法区分这两个点。这样，我们就会说看不清目标了。那么人眼睛视力的极限是多少呢？</p>
+
+<p>如上，艾里斑的大小确定了透镜的分辨率，当然数值越小的艾里斑代表着更好的分辨率。它由这个公式确定</p>
+
+<pre><code>sin(θ) ≈ 1.22×（λ/d）
+</code></pre>
+
+<p>λ代表波长，d代表孔径直径。在θ极小的时候，sin(θ)∽θ，所以上式也可简化为</p>
+
+<pre><code>θ ≈ 1.22×（λ/d）
+</code></pre>
+
+<p>由上可知，透镜分辨率由波长与孔径大小决定。为了获得更好（小）的分辨率，可以通过减少波长（换光）与增大孔径（大镜头）来达成。在θ小的情况下，还有一个更简易的公式</p>
+
+<pre><code>θ ≈ x/f = h/D = 1.22×（λ/d）
+</code></pre>
+
+<p>x代表物体在视网膜（幕布）的投影大小，f为眼睛焦距,h为物体高度，D为物距。对于人眼睛来讲，瞳孔大小5毫米，光线波长500纳米，很容易算出角度为</p>
+
+<pre><code>θ ≈ 1.22×（λ/d）× 180/π ≈ 0.007°
+h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
+</code></pre>
+
+<p>这个是人眼睛分辨的极限了，相当于在100m处看一1厘米的物体，要知道到这个程度人眼睛看到的物体在视网膜上的投影就会被模糊掉了。</p>
+
+<p>当 Legolas 在24千米外观察骑兵时候，其能分辨的极限可从上面公式得处为2.96米，也即3米高的物体在Legolas看来就已经开始模糊不清了，或许他能从模糊中数出骑兵数目，可要看清每人装束就不可能了。除非————</p>
+
+<h2>what if</h2>
+
+<p>上面的公式告诉我们，要想让θ小。可以通过减小λ,增大d,增大f来实现。</p>
+
+<p>如果Legolas能够看到波长更短的光线，比如紫外线。如果他能看到波长200纳米的紫外线，那么在24千米外他能够刚刚分清</p>
+
+<pre><code>h = 1.22×（200×10^-9/(5×10^-3)）×24000 = 1.2米
+</code></pre>
+
+<p>这样大小的物体，区分人物已经够了。可是，要知道空气会吸收紫外线，紫外线在大气中并不能有效传播，意味着Legolas很可能生活在一片黑暗当中！</p>
+
+<p>Legolas眼睛构造与人不同，比如说，焦距长，好比一个望远镜。这样对于Legolas简直就是灾难，因为长焦的镜头一般来讲视场小，对于抖动很敏感。玩过望远镜的同学就能感觉到，人裸眼看到的一片星空，通过望远镜只能看到皮毛大的一块，通过望远镜来巡视一片星空是很费时费力的。这对善于狩猎的精灵族人来讲，要有进化出强健的结构来支撑脖子（防抖），同时还能快速扫描目标区域。那么精灵族人的头部可能是这样的：</p>
+
+<p><img src="http://tianyaqu.github.com/tianyaqu/images/Chicken-Powered-Image-Stabilization.jpg" alt="Chicken Powered Camera Stabilization" /></p>
+
+<p>或者，Legolas的瞳孔异于常人。比如这样子：</p>
+
+<p><img src="http://tianyaqu.github.com/tianyaqu/images/gollum.jpg" alt="gollum" /></p>
+
+<p>当然，还可以靠魔法嘛。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[c++ template explicit instantiation]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
+    <updated>2014-09-11T01:54:40+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
+    <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
+当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。这个问题的原因在于，template具现化（instantiated）的时机是在编译期，而编译期间不同文件的细节是彼此不知道的，除非include过去（include就把两个文件合并了，仍然是同一个文件）。template可以理解为一个“模式”，其声明部分说明①“模式是什么”，实现部分说明②&#8221;怎么做&#8221;,而调用部分说明③“哪一个模式”，只有编译器同时知道了两者，才能正确的具现化。
+template具现化的时机是找到被调用的地方，这样找到了③，通过头文件顺藤摸瓜获得了①,如果②与①不再一个文件,那么&#8221;编译期间不能跨文件&#8221;的魔力就发挥出来了,导致具现化失败。
+那么有办法做到分离么？肯定有。下面介绍三种方法。</p>
+
+<!--more-->
+
+
+<h2>1. 通过include引用</h2>
+
+<p>本质上是把声明与实现放到同一个文件。foo.h是声明部分，foo.cpp是实现部分，main.cpp是调用部分，在foo.h末尾include &#8220;foo.cpp&#8221;,main.cpp使用时候include &#8220;foo.h&#8221;即可。include关键字的作用是在将当前行替换为include文件的内容。这也就避免了编译时期跨文件的问题。这种方法被称为置入式模型（inclusion model）。</p>
+
+<h2>2. explicit instantiation</h2>
+
+<p>这个是本文主要提到的内容。除了置入式模型之外，c++提供另外一种方式，称之为“显式具现化”（explicit instantiation）。它要求用户主动明确地书写出模版的适用类型，</p>
+
+<pre><code>template Class&lt;int&gt;;
+</code></pre>
+
+<p>这样代码的结构变成了:foo.h声明，foodef.h实现部分，foo_inst.cpp显式具现化，然后由main.cpp调用。</p>
+
+<pre><code>//foo.h
+template &lt;typename T&gt;
+class Interface
+{
+public:
+    Interface(T const&amp;);
+    void show(T);
+private:
+    T data;
+};
+
+//foodef.h
+#include "foo.h"
+#include &lt;iostream&gt;
+template &lt;typename T&gt;
+Interface&lt;T&gt;::Interface(T const&amp;t)
+{
+    data = t;
+}
+
+template&lt;typename T&gt;
+void Interface&lt;T&gt;::show(T x)
+{
+    std::cout&lt;&lt;x&lt;&lt;std::endl;
+    std::cout&lt;&lt;data&lt;&lt;std::endl;
+}
+
+
+//foo_inst.cpp
+#include "foodef.h"
+
+template class Interface&lt;int&gt;;
+template class Interface&lt;float&gt;;
+
+//main.cpp
+#include "foo.h"
+Interface&lt;float&gt; fl(2.4);
+fl.show(4.5);
+Interface&lt;int&gt; fi(5);
+fi.show(2);
+</code></pre>
+
+<p>这种方法甚至可以将模版的实现作成lib被外部使用，将foo_inst.cpp作成lib。</p>
+
+<pre><code>g++ -c foo_inst.cpp -o foo_inst.o
+ar rcs libfoo.a foo_inst.o
+</code></pre>
+
+<p>在项目中链接该库即可。(有人说这样的话，要把foo.h中使用extern将显式的template声明出来，我这里编译器gcc 4.6.3，没有使用extern关键字不提示错误或者警告。原因不明，有知道原因的请告诉我）。</p>
+
+<h2><del>3. export关键字</del></h2>
+
+<p>该方法的使用比较简单，需要在在申明与实现的部分在template前加上export关键字，好假啊，为什么不早点告诉我？
+编译器支持太有限了！如《c++ template》中讲到，02年时候只有一家公司(Edison Design Group,Inc)实现了export，gcc,vs,clang都不支持。用户使用起来简单了，而内部实现却复杂了。比如</p>
+
+<pre><code>template Class&lt;int&gt;
+</code></pre>
+
+<p>变为</p>
+
+<pre><code>template Class&lt;float&gt;
+</code></pre>
+
+<p>所有依赖的代码都要重新编译。而常用的项目组织工具如make,会根据文件修改时间以及文件依赖次序来决定是否重新编译，在这种情况下(template代码没变)可能不按照大家的意图来重新编译。只有靠编译器来一一记住这些依赖关系来决定编译与否，这也不会有太多编译时间上的优势。
+还有一个现实是，在c++0x标准中，export被列为过时（obsolete）的！而推用extern了。坑爹那！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[分离一个核模板]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/04/10/seperate-a-sperable-filter/"/>
+    <updated>2014-04-10T20:54:40+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/04/10/seperate-a-sperable-filter</id>
+    <content type="html"><![CDATA[<p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
+
+<script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
+
+
+<p>这样，如果能将滤波器（二维）转化成两个一维的乘积形式，计算量就降低到<script type="math/tex">2 \times M \times N</script>，这样会大大简化计算量，尤其是是当图像比较大的时候，计算量的优势就越明显。<a href="http://blog.csdn.net/zddblog/article/details/7450033">这篇文章</a>给出了不同高斯实现的性能比较。
+最典型的应用当属二维高斯滤波了，二维高斯核刚好等同于两个一维高斯的乘积，二维高斯核函数可以用一维的高斯核分别在x轴和y作卷积来代替。</p>
+
+<!--more-->
+
+
+<pre><code>% kernel width  6*sigma (-3sigma,3sigma) should be ok
+cutoff = ceil(3*sigma);  
+% 1D gauss kernel.width puls one to make it symentric
+h = fspecial('gaussian',[1,2*cutoff+1],sigma);  
+out = conv2(h,h,I,'same');
+</code></pre>
+
+<p>OK，高斯这个是情况特殊（恩，高斯可是跟上帝掷色子的人）。现在我们有任意一个核函数模板，怎么去分解这个矩阵呢？
+这里有两种方法，先说一下简单的方法。它的思路是利用可分离核函数的对称性，任意取出一列Cn，作为分解列向量h1，取对应行Rn，同时为了保证归整，h2 = Rn/K(n,n)作为行向量。不过，可能会遇到除0的情况，所以更普遍意义上是这么实现的：</p>
+
+<pre><code>% Pick the column with largest values
+[~,I] = max(sum(abs(h))); 
+h1 = h(:,I);
+% Pick the row with largest values
+[~,I] = max(sum(abs(h),2)); 
+h2 = h(I,:)/h1(I);
+</code></pre>
+
+<p>第二种类方法，充分利用了svd的强大计算能力。svd可以将一个矩阵（核模板只是一个方阵）分解成两个正交矩（这两个矩不正交）夹乘一个对角阵，</p>
+
+<script type="math/tex">A=US{ V }^{ T } </script>
+
+
+<p>那么，很容易得到 AV = US，又由于V是一个正交矩阵，取任一列作<script type="math/tex">V_i</script>,有</p>
+
+<script type="math/tex">A{V_i}{V_i}^{T}=AE=A </script>
+
+
+
+
+<p>如此，便得到 <script type="math/tex">AV_i</script>与 $V_{i}^T$ 为卷积核的两个一维分量。</p>
+
+
+<pre><code>[u,s,v] = svd(h);
+s = diag(s);
+if sum(s &gt; eps('single'))==1
+    h1 = u(:,1)*s(1);
+    h2 = v(:,1)';
+else
+    error('Kernel not separable!')
+end
+</code></pre>
+
+<p>注：文中的代码来源于 <a href="http://www.cb.uu.se/~cris/blog/index.php/archives/288">Cris&#8217;s Image Analysis Blog</a>
+ps:
+怎样才能确认该核模板为可分离（seperable）呢？答：秩为1;
+这方法是不是降维啊？肯定是。挖个坑，以后补上PCA。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello,Uncle?]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/02/28/hello-uncle/"/>
+    <updated>2014-02-28T21:16:40+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/02/28/hello-uncle</id>
+    <content type="html"><![CDATA[<p>哥哥弟弟brother,姑姑舅妈叫aunt，姑父舅舅叫uncle，姑姑的儿子叫cousin，那爸爸的cousin叫什么呢？恩，uncle?</p>
+
+<p>人常说英语描述亲属关系不准却，“堂”“表”“长”“幼”“男”“女”不分，上下尊卑无别，这是要亡国的节奏。书里面冒出来路人甲叫你uncle，恨的人咬牙切齿，这是侄子还是外甥？英语世界对亲属关系的描述是基于“代”的，不分“父支”“母支“，也就是说堂兄是你的cousin，表兄也是cousin。另外，堂兄也有很多，在中华的语境里，父亲的兄弟的儿子叫堂兄，父亲堂兄的儿子也叫堂兄。按照歪国人”不知里表“的传统，也都叫cousin吧。</p>
+
+<!--more-->
+
+
+<p>不巧的是，这次写书的倒像是国产埋首故纸堆的老学究，舞文弄字食古不化，甩出来个 second cousin,once removed一下子傻眼了。曾被逐出家门（又归家）的二表姐？两家断亲（又续亲）的二表姐？出嫁的二表姐？</p>
+
+<p>严格意义来说（照歪国人来说就是technically speaking，这也算科技？），cousin是一人的第三世后代之间的称谓（这人为第一世），也叫first cousin，这也就把（亲）姑、舅、姨、叔、伯的儿女囊括其中，依次推算，这人的第四世后代之间，便是second cousin。</p>
+
+<p>而once removed则表示”代差“，你父亲的first cousin，也就是国产的表叔/姑，对你而言就是first cousin once removed，因为你们之间有一代辈份的差距。有意思的是，这个称谓是相互的。你叫他first cousin once removed；同理他也如此叫你。不过事无绝对，也有叫表叔second uncle的，这就另当别论了。</p>
+
+<p>有关系表一张：</p>
+
+<center><img src="http://tianyaqu.github.com/tianyaqu/images/kinship.png"></center>
+
+
+
+
+<p>使用方法：</p>
+
+
+<p>选取两人最近的公共祖先，将两人分别置于行与列上，根据他们与公共祖先的关系(child?grandchild?.etc)，选择行号与列号， 行与列确定的区域即是两人的关系。</p>
+
+
+<p>比如一家族树如下所示，</p>
+
+<center><img src="http://tianyaqu.github.com/tianyaqu/images/familytree.png"></center>
+
+
+<center>source:wikepedia</center>
+
+
+
+
+<p>David与Emma, 他们最近的公共祖先为Agatha，David用行代表，Emma为列，他们都距离Agatha二代，即行号、列号落在Grandchild上， 得出两人是first cousin。David与Gloria，坐标为Grandchild与G-grandchild，便是first cousin once removed，同理Frank与Gloria就是Second cousin了。 </p>
+
+
+<p>至于“堂”“表”的称谓，一般是不写出那么清晰的，像P&amp;P中出现的两对aunt，只能根据姓氏、上下文对话来推断是姨不是姑。如果想要描述具体，可以说是 paternal aunt/uncle或者maternal aunt/uncle,也又说aunt/uncle of matrilinear/female line，这就不拘一格了。</p>
+
+<p>表姐/弟 的说法就是用cousin sister,cousin brother 区分男女， 前面加elder/yonger来表长幼。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Listen to the air]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/01/11/listen-to-the-air/"/>
+    <updated>2014-01-11T01:59:40+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/01/11/listen-to-the-air</id>
+    <content type="html"><![CDATA[<p>sherlock深吸一口气双目深凝耳朵瞪大嘴角含笑身形飘逸才思敏捷之后：Watson,Moriaty gets me another case!啊?发生什么事情了么？神探的技能升级了！不仅能感受周围人思考时的annoying noise，而且能截获电波！再也不用担心手机没电，漏掉whip queen的求救短信了。</p>
+
+
+<p>这当然是个笑话。可是，怎么才能具有这种特殊本领呢？首先，你得具有计算能力，其次计算能力还得十分高效（否则你就提前一周交代好家人做好墓碑原地埋葬），再次还需要IT人士打造一款[贴心]安装的app。什么样的app?</p>
+
+<!--more-->
+
+
+<p>我们在听广播节目的时候，需要指定一个频率，比如102.1MHZ，然后才能收听。可是这个跟好男人曾老师在演播室的声音有什么关系呢？声音本质上是一个正弦波，人类发声的是一个频率比较低的正弦波。平时对话的时候，我们直接将这个波发送到空气中，传到对方的耳朵里，但是距离很有限，通信基本靠吼也就只能在村里才有用武之地。</p>
+
+<p>可是高频信号却有一些十分有利的特性：其一传送距离远而且需要能量小；其二是它的宽度比较大，可以多个信号复用同一个信道。102.1MHZ就是一个高频的信号，电台选用它希望可以把曾老师富有魅力的声音附带上去，从而得到一个高频信号，他的中心频率刚好是102.1MHZ。</p>
+
+<p>数学家们是这么做出来的：学名叫调制。</p>
+
+<p><img src="http://tianyaqu.github.com/tianyaqu/images/psb.png" alt="调制" /></p>
+
+<p>y 表示调制后的信号，x为原始信号，fc为载波频率</p>
+
+<p>注意到，y的相位与源信号是有紧密关系的（看不出来？相位先微分再作除法就是x）。所以有人说调频的信息是由波的频率附带的，它对幅度方向的噪音不敏感。</p>
+
+<p>然后把y放到电台的传送设备上OK.现在在大街上都能收到这电波了，嗯，空气中好像弥漫着电波的味道。曾老师松了一口气，终于没事了。可是他还很忧虑：似乎还有隔壁那个山寨电台你的月亮我的心的101.2MHZ的味道&#8230;风声雨声读书声，当然还有菜市场的叫卖声，手机电话的电波。。。这该怎么区分呢？傅立叶从罗密欧怀里走出来：这就是我存在的意义。。。</p>
+
+<p>傅立叶变换人称为信号界的显微镜，不是白吹牛的。不用傅立叶变换，我们还是回忆高等数学的傅立叶基数。</p>
+
+<p><img src="http://tianyaqu.github.com/tianyaqu/images/fourier.png" alt="傅里叶基数" /></p>
+
+<p>公式指数部分代表着频率。傅立叶基数的普遍意义是将一个信号分解出不同频率（k）的分量。   好了，经过傅立叶这个照妖镜，得到来自关心频道的信息，曾老师你可以放心松口气了。现在得到的是经过载波之后的信号，需要进一步把载波去掉，才能最终得到演播室的原始声音，这就是所谓的解调。跟电台的操作刚好相反。前面说道，信号的相位与源信号紧密相关，那么获取了相位信息，也就能还原出源信号。我不告诉你这种方法叫Quarature detectator。于是我讲一下另一
+种方法。</p>
+
+<p>上公式</p>
+
+<p><img src="http://tianyaqu.github.com/tianyaqu/images/demodulation.png" alt="解调" /></p>
+
+<p>依然是求导。不过这个方法却不需要计算相位。微分之后，却把相位信息放到了正弦函数的系数上了。由于系数携带着被调频的信息，所以歪国人称之为envelope，我国称之为包络。这个包络可以用硬件，也可用软件实现。Ac,fc,fdelt 是常值，据此很容易推出x。</p>
+
+<p>Q.E.D.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[a test post]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post/"/>
+    <updated>2013-09-08T16:47:46+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post</id>
+    <content type="html"><![CDATA[<p>some thing to write.</p>
+
+
+<p>&#8220;测试中文&#8221;，效果还行。</p>
+
+
+<p>爱因斯坦提出了质能方程：<script type="math/tex">E=mc^2</script>.他是一个伟大的物理学家.</p>
+
+
+<p>game over.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/hello-world/"/>
+    <updated>2013-09-08T04:48:04+08:00</updated>
+    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/hello-world</id>
+    <content type="html"><![CDATA[<p>Welcome to <a href="http://zespia.tw/hexo">Hexo</a>! This is your very first post. Check <a href="http://zespia.tw/hexo/docs">documentation</a> to learn how to use.</p>
+]]></content>
+  </entry>
+  
+</feed>
