@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: template | When Winter Falls]]></title>
   <link href="http://tianyaqu.github.com/tianyaqu/blog/tags/template/atom.xml" rel="self"/>
   <link href="http://tianyaqu.github.com/tianyaqu/"/>
-  <updated>2014-10-16T13:13:19+08:00</updated>
+  <updated>2014-10-16T13:19:47+08:00</updated>
   <id>http://tianyaqu.github.com/tianyaqu/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -19,12 +19,14 @@
     <updated>2014-09-11T01:54:40+08:00</updated>
     <id>http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
     <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
-当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。这个问题的原因在于，template具现化（instantiated）的时机是在编译期，而编译期间不同文件的细节是彼此不知道的，除非include过去（include就把两个文件合并了，仍然是同一个文件）。template可以理解为一个“模式”，其声明部分说明①“模式是什么”，实现部分说明②"怎么做",而调用部分说明③“哪一个模式”，只有编译器同时知道了两者，才能正确的具现化。
-template具现化的时机是找到被调用的地方，这样找到了③，通过头文件顺藤摸瓜获得了①,如果②与①不再一个文件,那么"编译期间不能跨文件"的魔力就发挥出来了,导致具现化失败。
-那么有办法做到分离么？肯定有。下面介绍三种方法。</p>
+当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。</p>
 
 <!--more-->
 
+
+<p>这个问题的原因在于，template具现化（instantiated）的时机是在编译期，而编译期间不同文件的细节是彼此不知道的，除非include过去（include就把两个文件合并了，仍然是同一个文件）。template可以理解为一个“模式”，其声明部分说明①“模式是什么”，实现部分说明②"怎么做",而调用部分说明③“哪一个模式”，只有编译器同时知道了两者，才能正确的具现化。
+template具现化的时机是找到被调用的地方，这样找到了③，通过头文件顺藤摸瓜获得了①,如果②与①不再一个文件,那么"编译期间不能跨文件"的魔力就发挥出来了,导致具现化失败。
+那么有办法做到分离么？肯定有。下面介绍三种方法。</p>
 
 <h2>1. 通过include引用</h2>
 

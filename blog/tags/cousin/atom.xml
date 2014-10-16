@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: cousin | When Winter Falls]]></title>
   <link href="http://tianyaqu.github.com/tianyaqu/blog/tags/cousin/atom.xml" rel="self"/>
   <link href="http://tianyaqu.github.com/tianyaqu/"/>
-  <updated>2014-10-16T13:13:19+08:00</updated>
+  <updated>2014-10-16T13:19:47+08:00</updated>
   <id>http://tianyaqu.github.com/tianyaqu/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -33,7 +33,7 @@
 
 <p>有关系表一张：</p>
 
-<center><img src="/images/kinship.png"></center>
+<center>{% img /images/kinship.png %}</center>
 
 
 
@@ -46,7 +46,7 @@
 
 <p>比如一家族树如下所示，</p>
 
-<center><img src="/images/familytree.png"></center>
+<center>{% img /images/familytree.png %}</center>
 
 
 <center>source:wikepedia</center>
