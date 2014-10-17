@@ -4,7 +4,6 @@ title: PCA and Its Applications
 date: 2014-10-14 11:40:15
 categories: [Machine Learning]
 tags: [主成分分析,人脸识别]
-published: false
 comments: true
 ---
 书接[上回](/blog/2014/04/10/seperate-a-sperable-filter/),讲一下PCA。
