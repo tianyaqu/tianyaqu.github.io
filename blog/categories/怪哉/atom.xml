@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 怪哉 | When Winter Falls]]></title>
   <link href="http://tianyaqu.com/blog/categories/怪哉/atom.xml" rel="self"/>
   <link href="http://tianyaqu.com/"/>
-  <updated>2014-10-17T09:43:59+08:00</updated>
+  <updated>2014-10-17T17:30:43+08:00</updated>
   <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -95,7 +95,7 @@ h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
 
 <p>有关系表一张：</p>
 
-<center>{% img /images/kinship.png %}</center>
+<center><img src="/images/kinship.png"></center>
 
 
 
@@ -108,7 +108,7 @@ h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
 
 <p>比如一家族树如下所示，</p>
 
-<center>{% img /images/familytree.png %}</center>
+<center><img src="/images/familytree.png"></center>
 
 
 <center>source:wikepedia</center>
