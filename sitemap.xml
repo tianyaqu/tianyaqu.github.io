@@ -1,61 +1,61 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/hello-world/</loc>
+        <loc>http://tianyaqu.com/blog/2013/09/08/hello-world/</loc>
         <lastmod>2014-10-16T12:37:51+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post/</loc>
+        <loc>http://tianyaqu.com/blog/2013/09/08/a-test-post/</loc>
         <lastmod>2014-10-16T12:29:31+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2014/01/11/listen-to-the-air/</loc>
+        <loc>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/</loc>
         <lastmod>2014-10-16T12:29:31+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2014/02/28/hello-uncle/</loc>
+        <loc>http://tianyaqu.com/blog/2014/02/28/hello-uncle/</loc>
         <lastmod>2014-10-16T12:29:31+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2014/04/10/seperate-a-sperable-filter/</loc>
+        <loc>http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/</loc>
         <lastmod>2014-10-16T12:29:31+08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/
+            http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/
         </loc>
         <lastmod>2014-10-16T13:16:48+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/2014/10/01/how-far-can-Legolas-see/</loc>
+        <loc>http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see/</loc>
         <lastmod>2014-10-16T12:29:31+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/404.html</loc>
+        <loc>http://tianyaqu.com/404.html</loc>
         <lastmod>2014-10-07T15:58:23+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/robots.txt</loc>
+        <loc>http://tianyaqu.com/robots.txt</loc>
         <lastmod>2014-10-07T15:58:23+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/</loc>
+        <loc>http://tianyaqu.com/</loc>
         <lastmod>2014-10-16T13:16:48+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/about/</loc>
+        <loc>http://tianyaqu.com/about/</loc>
         <lastmod>2014-10-15T16:54:10+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/archives/</loc>
+        <loc>http://tianyaqu.com/blog/archives/</loc>
         <lastmod>2014-10-16T13:16:48+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/tags/</loc>
+        <loc>http://tianyaqu.com/blog/tags/</loc>
         <lastmod>2014-10-16T13:16:48+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tianyaqu.github.com/tianyaqu/blog/categories/</loc>
+        <loc>http://tianyaqu.com/blog/categories/</loc>
         <lastmod>2014-10-16T13:16:48+08:00</lastmod>
     </url>
 </urlset>

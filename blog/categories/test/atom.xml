@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: test | When Winter Falls]]></title>
-  <link href="http://tianyaqu.github.com/tianyaqu/blog/categories/test/atom.xml" rel="self"/>
-  <link href="http://tianyaqu.github.com/tianyaqu/"/>
-  <updated>2014-10-16T13:19:47+08:00</updated>
-  <id>http://tianyaqu.github.com/tianyaqu/</id>
+  <link href="http://tianyaqu.com/blog/categories/test/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2014-10-17T09:43:59+08:00</updated>
+  <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[a test post]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post/"/>
+    <link href="http://tianyaqu.com/blog/2013/09/08/a-test-post/"/>
     <updated>2013-09-08T16:47:46+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post</id>
+    <id>http://tianyaqu.com/blog/2013/09/08/a-test-post</id>
     <content type="html"><![CDATA[<p>some thing to write.</p>
 
 

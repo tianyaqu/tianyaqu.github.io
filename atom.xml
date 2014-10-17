@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[When Winter Falls]]></title>
-  <link href="http://tianyaqu.github.com/tianyaqu/atom.xml" rel="self"/>
-  <link href="http://tianyaqu.github.com/tianyaqu/"/>
-  <updated>2014-10-16T13:19:46+08:00</updated>
-  <id>http://tianyaqu.github.com/tianyaqu/</id>
+  <link href="http://tianyaqu.com/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2014-10-17T09:43:58+08:00</updated>
+  <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Legolas 究竟能看多远？]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/10/01/how-far-can-Legolas-see/"/>
+    <link href="http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see/"/>
     <updated>2014-10-01T04:54:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/10/01/how-far-can-Legolas-see</id>
+    <id>http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see</id>
     <content type="html"><![CDATA[<p>指环王的设定中，精灵族被描述为英俊潇洒、武功高强、视力敏锐的类人类（human-like）形象。别的不说，但就视力敏锐这一项，就让人望不可及。在护戒小分队中，精灵王子 Legolas 扮演侦察员的角色，经常留意远处突然出现的危险。“the Riders of Rohan”一章中，Legolas 在 5 leagues（约24km。 1 leaue等于3mile,1 mile 约1.6km）开外就发现了 Rohan 的骑兵队伍，不仅看清他们的发色、装备、人数，还从中认出了对方的指挥官。多么了不起的眼力！ Legolas 真能看那么远么？</p>
 
 <!--more-->
@@ -65,11 +65,11 @@ h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
 
 <p>Legolas眼睛构造与人不同，比如说，焦距长，好比一个望远镜。这样对于Legolas简直就是灾难，因为长焦的镜头一般来讲视场小，对于抖动很敏感。玩过望远镜的同学就能感觉到，人裸眼看到的一片星空，通过望远镜只能看到皮毛大的一块，通过望远镜来巡视一片星空是很费时费力的。这对善于狩猎的精灵族人来讲，要有进化出强健的结构来支撑脖子（防抖），同时还能快速扫描目标区域。那么精灵族人的头部可能是这样的：</p>
 
-<p><img src="http://tianyaqu.github.com/tianyaqu/images/Chicken-Powered-Image-Stabilization.jpg" alt="Chicken Powered Camera Stabilization" /></p>
+<p><img src="http://tianyaqu.com/images/Chicken-Powered-Image-Stabilization.jpg" alt="Chicken Powered Camera Stabilization" /></p>
 
 <p>或者，Legolas的瞳孔异于常人。比如这样子：</p>
 
-<p><img src="http://tianyaqu.github.com/tianyaqu/images/gollum.jpg" alt="gollum" /></p>
+<p><img src="http://tianyaqu.com/images/gollum.jpg" alt="gollum" /></p>
 
 <p>当然，还可以靠魔法嘛。</p>
 ]]></content>
@@ -77,9 +77,9 @@ h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
   
   <entry>
     <title type="html"><![CDATA[c++ template explicit instantiation]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
+    <link href="http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
     <updated>2014-09-11T01:54:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
+    <id>http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
     <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
 当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。</p>
 
@@ -173,9 +173,9 @@ ar rcs libfoo.a foo_inst.o
   
   <entry>
     <title type="html"><![CDATA[分离一个核模板]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/04/10/seperate-a-sperable-filter/"/>
+    <link href="http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/"/>
     <updated>2014-04-10T20:54:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/04/10/seperate-a-sperable-filter</id>
+    <id>http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter</id>
     <content type="html"><![CDATA[<p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
 
 <script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
@@ -239,9 +239,9 @@ ps:
   
   <entry>
     <title type="html"><![CDATA[Hello,Uncle?]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/02/28/hello-uncle/"/>
+    <link href="http://tianyaqu.com/blog/2014/02/28/hello-uncle/"/>
     <updated>2014-02-28T21:16:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/02/28/hello-uncle</id>
+    <id>http://tianyaqu.com/blog/2014/02/28/hello-uncle</id>
     <content type="html"><![CDATA[<p>哥哥弟弟brother,姑姑舅妈叫aunt，姑父舅舅叫uncle，姑姑的儿子叫cousin，那爸爸的cousin叫什么呢？恩，uncle?</p>
 
 <p>人常说英语描述亲属关系不准却，“堂”“表”“长”“幼”“男”“女”不分，上下尊卑无别，这是要亡国的节奏。书里面冒出来路人甲叫你uncle，恨的人咬牙切齿，这是侄子还是外甥？英语世界对亲属关系的描述是基于“代”的，不分“父支”“母支“，也就是说堂兄是你的cousin，表兄也是cousin。另外，堂兄也有很多，在中华的语境里，父亲的兄弟的儿子叫堂兄，父亲堂兄的儿子也叫堂兄。按照歪国人”不知里表“的传统，也都叫cousin吧。</p>
@@ -257,7 +257,7 @@ ps:
 
 <p>有关系表一张：</p>
 
-<center><img src="http://tianyaqu.github.com/tianyaqu/images/kinship.png"></center>
+<center><img src="http://tianyaqu.com/images/kinship.png"></center>
 
 
 
@@ -270,7 +270,7 @@ ps:
 
 <p>比如一家族树如下所示，</p>
 
-<center><img src="http://tianyaqu.github.com/tianyaqu/images/familytree.png"></center>
+<center><img src="http://tianyaqu.com/images/familytree.png"></center>
 
 
 <center>source:wikepedia</center>
@@ -289,9 +289,9 @@ ps:
   
   <entry>
     <title type="html"><![CDATA[Listen to the air]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/01/11/listen-to-the-air/"/>
+    <link href="http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/"/>
     <updated>2014-01-11T01:59:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/01/11/listen-to-the-air</id>
+    <id>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air</id>
     <content type="html"><![CDATA[<p>sherlock深吸一口气双目深凝耳朵瞪大嘴角含笑身形飘逸才思敏捷之后：Watson,Moriaty gets me another case!啊?发生什么事情了么？神探的技能升级了！不仅能感受周围人思考时的annoying noise，而且能截获电波！再也不用担心手机没电，漏掉whip queen的求救短信了。</p>
 
 
@@ -306,7 +306,7 @@ ps:
 
 <p>数学家们是这么做出来的：学名叫调制。</p>
 
-<p><img src="http://tianyaqu.github.com/tianyaqu/images/psb.png" alt="调制" /></p>
+<p><img src="http://tianyaqu.com/images/psb.png" alt="调制" /></p>
 
 <p>y 表示调制后的信号，x为原始信号，fc为载波频率</p>
 
@@ -316,14 +316,14 @@ ps:
 
 <p>傅立叶变换人称为信号界的显微镜，不是白吹牛的。不用傅立叶变换，我们还是回忆高等数学的傅立叶基数。</p>
 
-<p><img src="http://tianyaqu.github.com/tianyaqu/images/fourier.png" alt="傅里叶基数" /></p>
+<p><img src="http://tianyaqu.com/images/fourier.png" alt="傅里叶基数" /></p>
 
 <p>公式指数部分代表着频率。傅立叶基数的普遍意义是将一个信号分解出不同频率（k）的分量。   好了，经过傅立叶这个照妖镜，得到来自关心频道的信息，曾老师你可以放心松口气了。现在得到的是经过载波之后的信号，需要进一步把载波去掉，才能最终得到演播室的原始声音，这就是所谓的解调。跟电台的操作刚好相反。前面说道，信号的相位与源信号紧密相关，那么获取了相位信息，也就能还原出源信号。我不告诉你这种方法叫Quarature detectator。于是我讲一下另一
 种方法。</p>
 
 <p>上公式</p>
 
-<p><img src="http://tianyaqu.github.com/tianyaqu/images/demodulation.png" alt="解调" /></p>
+<p><img src="http://tianyaqu.com/images/demodulation.png" alt="解调" /></p>
 
 <p>依然是求导。不过这个方法却不需要计算相位。微分之后，却把相位信息放到了正弦函数的系数上了。由于系数携带着被调频的信息，所以歪国人称之为envelope，我国称之为包络。这个包络可以用硬件，也可用软件实现。Ac,fc,fdelt 是常值，据此很容易推出x。</p>
 
@@ -333,9 +333,9 @@ ps:
   
   <entry>
     <title type="html"><![CDATA[a test post]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post/"/>
+    <link href="http://tianyaqu.com/blog/2013/09/08/a-test-post/"/>
     <updated>2013-09-08T16:47:46+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/a-test-post</id>
+    <id>http://tianyaqu.com/blog/2013/09/08/a-test-post</id>
     <content type="html"><![CDATA[<p>some thing to write.</p>
 
 
@@ -351,9 +351,9 @@ ps:
   
   <entry>
     <title type="html"><![CDATA[Hello World]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/hello-world/"/>
+    <link href="http://tianyaqu.com/blog/2013/09/08/hello-world/"/>
     <updated>2013-09-08T04:48:04+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2013/09/08/hello-world</id>
+    <id>http://tianyaqu.com/blog/2013/09/08/hello-world</id>
     <content type="html"><![CDATA[<p>Welcome to <a href="http://zespia.tw/hexo">Hexo</a>! This is your very first post. Check <a href="http://zespia.tw/hexo/docs">documentation</a> to learn how to use.</p>
 ]]></content>
   </entry>

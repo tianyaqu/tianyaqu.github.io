@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: template | When Winter Falls]]></title>
-  <link href="http://tianyaqu.github.com/tianyaqu/blog/tags/template/atom.xml" rel="self"/>
-  <link href="http://tianyaqu.github.com/tianyaqu/"/>
-  <updated>2014-10-16T13:19:47+08:00</updated>
-  <id>http://tianyaqu.github.com/tianyaqu/</id>
+  <link href="http://tianyaqu.com/blog/tags/template/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2014-10-17T09:43:59+08:00</updated>
+  <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[c++ template explicit instantiation]]></title>
-    <link href="http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
+    <link href="http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
     <updated>2014-09-11T01:54:40+08:00</updated>
-    <id>http://tianyaqu.github.com/tianyaqu/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
+    <id>http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
     <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
 当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。</p>
 
