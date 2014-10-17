@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>PCA and Its Applications - When Winter Falls</title>
+  <meta name="author" content="tianyaqu">
+
+  
+  <meta name="description" content="">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="When Winter Falls" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	// hide #back-top first
+	$("#back-top").hide();
+	
+	// fade in #back-top
+	$(function () {
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {
+				$('#back-top').fadeIn();
+			} else {
+				$('#back-top').fadeOut();
+			}
+		});
+
+		// scroll body to 0px on click
+		$('#back-top a').click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 800);
+			return false;
+		});
+	});
+
+});
+</script>
+
+  
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">When Winter Falls</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/search" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:tianyaqu.com" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">PCA and Its Applications</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-14T19:40:15+08:00" pubdate data-updated="true">Oct 14<span>th</span>, 2014</time>
+        
+        
+          | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>书接<a href="/blog/2014/04/10/seperate-a-sperable-filter/">上回</a>,讲一下PCA。
+PCA（Principal Components Analysis）,主成分分析。它是人脸识别、图像压缩中一项重要的工具技巧，作用是在高维（多属性）数据集中找到隐含的模式，利用这些隐含的模式来代表原来的高维数据，从而达到数据简化的目的。首先明确一点，PCA的数据集是无标签的，也就是无所谓分类，属于无监督学习，这一点跟LDA还是有区别的。</p>
+
+<p>对于PCA的原理，有两种解释，也就有两个数学推导。一是找到一个线性投影，使投影后的维数下降，且数据差异最大（保留原数据的多样性）;二是保证投影损失最小，即原数据点与投影后的数据点距离平方和最小。下面，介绍下一。</p>
+
+<!--more-->
+
+
+
+
+<h4>1.简述</h4>
+
+
+<p>数据的多样性在统计上的对应便是方差。假定我们找到了投影向量$u_{1}$，简单起见，它还是一单位向量,也即$u_{1}u_{1}^T = 1$.</p>
+
+
+<p>那么投影前后的方差为</p>
+
+
+<p>$$\frac{1}{N}\sum_{n=1}^N\left\{u_{1}^Tx_n-u_{1}^T\bar{x}\right\}^2 = u_{1}^TSu_1$$</p>
+
+
+<br>
+
+
+<p>其中S为</p>
+
+<p>$$ S = \frac{1}{N}\sum_{n=1}^N(x_n - \bar{x})(x_n - \bar{x})^T $$</p>
+
+
+
+
+<p>在加上单位向量与其转置乘积为1的限定，考虑使用拉格朗日算子</p>
+
+
+<center>$$ U_{1}^TSu_1 + \lambda_1(1-u_{1}^Tu_1)$$</center>
+
+
+<p>对其求导，这样便成为一个线性代数上求特征根的问题：$Su_1 = \lambda_1(1-u_{1}^Tu_1)$ 。</p>
+
+
+<p>公式两边同时左乘以$u_{1}$,可以容易看出，$\lambda_1 = u_{1}^TSu_1$ 。</p>
+
+
+<p>所以当选择一个最大的特征值对应的是其最大的方差，此时对应的特征向量就被成为主成分。每个特征特征向量为D × 1的列向量。选定K（K&lt;=D）个较大特征值对应的特征向量U（D × K），作为投影向量。那么原数据经过投影后的数据便为 $X&#8217; = X × U$。</p>
+
+<p>总结一下，PCA的实施步骤为：</p>
+
+<pre><code>1.数据集减去平均值
+2.计算协方差矩阵
+3.求得协方差矩阵的特征值与特征向量
+4.对特征值从大到小排序，选定要使用的特征值与特征向量
+5.生成最终（降维后）数据
+</code></pre>
+
+<h4>2.高维情况</h4>
+
+
+<p>就这样了么？理论上是可行的。可是对协方差矩阵求特征解的时候，会有难度。因为大多数情况下，数据的维度远远比数据的数量大，即 N << D。特别对于图像处理而言，一个像素对应着一个维度，因此维度会特别大，协方差矩阵也会随之膨大(D×D)，导致计算量激增(协方差矩阵的计算复杂度为$O(D^{3})$。这里有个trick,将原数据转置，这样将数据的列转换数据的数目N，对其进行特征值求解，然后将特征向量转化为原矩阵的特征向量。Bishop 的《Pattern Recognition and Machine Learning》给出了证明。</p>
+
+给出一数据集X（已经减除平均值），其大小为（N × D，N << D）。协方差矩阵即为 $S = N^{-1}X^{T}X$,根据上面求PCA的步骤，计算协方差矩阵的特征值，便有：
+$$N^{-1}X^{T}Xu_{i} = {\lambda}_{i}u_i$$
+稍微作下变形。两边同时左乘$X$,则有
+$$N^{-1}XX^T(Xu_{i}) = \lambda_{i}(Xu_{i})$$
+注意到，$XX^T$是矩阵$X^T$协方差的表达。这是原数据的转置的协方差矩，大小N × N。对其分解，得到特征向量$v_i = Xu_i$
+同时，对上式两边再次左乘$X^T$,有
+$$(N^{-1}X^TX)(X^Tv_i) = \lambda_{i}(X^Tv_i)$$
+这不正是原始数据的分解矩阵么？！，可以看出 $X^Tv_i$ 正是其特征向量，它由原数据的转置$X^T$线性变换而来！
+$$u_i = \frac{1}{(N\lambda_{i})^{1/2}}X^Tv_i$$
+<p>即利用转置后的特征向量$v_i$,进行某种线性变换，获得的结果与本身的特征向量相同。可是，却在特征分解的时候减少了计算量。</p>
+
+<h4>3.人脸识别</h4>
+  
+<p>2中的知识其实已经说的很明白了，它解决了高维情况下矩阵分解问题，处理图像起来也就得心应手，一个简单的人脸鉴别便可做了。
+步骤大致如下：</p>
+
+<p>1.准备一个人脸不同照片，图片的大小务必一致。可以从网上的人脸库中提取一些;  
+<p>2.加载训练图片，获得原始数据X(N × D)。根据2中步骤，获得K个投影向量$u_i$; 
+<p>3.加载新图片，计算投影后向量X&#8217;(1 × K); 
+<p>4.计算与训练图片的投影距离，平均距离在阈值内则认为是该类。
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://tianyaqu.com">tianyaqu</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://tianyaqu.com">tianyaqu</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-14T19:40:15+08:00" pubdate data-updated="true">Oct 14<span>th</span>, 2014</time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/machine-learning/'>Machine Learning</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/zhu-cheng-fen-fen-xi/'>主成分分析</a>, <a class='tag' href='/blog/tags/ren-lian-shi-bie/'>人脸识别</a></span>
+		
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/10/01/how-far-can-Legolas-see/" title="Previous Post:
+        Legolas 究竟能看多远？">&laquo; Legolas 究竟能看多远？</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+    </ul>
+    
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="PCA and Its Applications"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tianyaqu"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END -->
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><p id = "back-top">
+	<a href="#top"><span></span>Back to Top</a>
+</p>
+<hr>
+<p>
+  Copyright &copy; 2009 - 2014 - <a href="http://tianyaqu.com">tianyaqu</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> </span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
