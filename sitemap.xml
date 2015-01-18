@@ -2,68 +2,72 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://tianyaqu.com/blog/2013/09/08/hello-world/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2013/09/08/a-test-post/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/02/28/hello-uncle/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/
         </loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications/</loc>
-        <lastmod>2014-10-21T16:43:33+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/2014/11/03/for-the-king/</loc>
-        <lastmod>2014-11-03T20:29:59+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://tianyaqu.com/blog/2015/01/19/a-new-day-has-come/</loc>
+        <lastmod>2015-01-19T01:28:21+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/404.html</loc>
-        <lastmod>2014-10-07T15:58:23+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/robots.txt</loc>
-        <lastmod>2014-10-07T15:58:23+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/</loc>
-        <lastmod>2014-11-03T20:29:59+08:00</lastmod>
+        <lastmod>2015-01-19T01:28:21+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/about/</loc>
-        <lastmod>2014-11-03T20:31:08+08:00</lastmod>
+        <lastmod>2014-11-16T17:21:42+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/archives/</loc>
-        <lastmod>2014-11-03T20:29:59+08:00</lastmod>
+        <lastmod>2015-01-19T01:28:21+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/tags/</loc>
-        <lastmod>2014-11-03T20:29:59+08:00</lastmod>
+        <lastmod>2015-01-19T01:28:21+08:00</lastmod>
     </url>
     <url>
         <loc>http://tianyaqu.com/blog/categories/</loc>
-        <lastmod>2014-11-03T20:29:59+08:00</lastmod>
+        <lastmod>2015-01-19T01:28:21+08:00</lastmod>
     </url>
 </urlset>
