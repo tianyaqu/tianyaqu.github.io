@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: muduo | When Winter Falls]]></title>
   <link href="http://tianyaqu.com/blog/tags/muduo/atom.xml" rel="self"/>
   <link href="http://tianyaqu.com/"/>
-  <updated>2015-02-24T19:26:23+08:00</updated>
+  <updated>2015-03-14T00:46:04+08:00</updated>
   <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -18,7 +18,7 @@
     <link href="http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine/"/>
     <updated>2015-02-24T15:36:00+08:00</updated>
     <id>http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine</id>
-    <content type="html"><![CDATA[<p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作图书笔记吧。</p>
+    <content type="html"><![CDATA[<p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作读书笔记吧。</p>
 
 <!--more-->
 

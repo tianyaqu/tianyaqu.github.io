@@ -170,6 +170,52 @@ $(document).ready(function(){
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/03/13/closure-decorator-and-tail-recursive/">闭包，装饰器与尾递归</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-13T19:33:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2015</time>
+        
+        
+          | <a href="/blog/2015/03/13/closure-decorator-and-tail-recursive/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近一周忙里偷闲，看着pdf学习Scala语言，算是初次接触函数式编程吧(如果不算python的foreach、迭代器与lamda表达式的话)。基本数据类型都是老生常谈了，函数式编程强调抛弃中间变量的做法在python中也算提前打了预防针，不过漫天遍地的新语法真让人开眼，比如古怪的占位符用法、不知所云的偏应用函数(partially applied function，书中的例子看起来好像在演示默认参数的用法)，以及一些奇技淫巧，比如String<em> 与 _</em>的不同妙用。总的感觉上是跟传统的语言(c/c++,java)在语法表达上都相差很远，读完不免有种囫囵吞枣的味道。</p>
+
+<p>这里梳理下几个“高大上”的概念，结合一部分python语言的设计，聊一下闭包、尾递归，以及python的装饰器，如有理解错误欢迎指正。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/03/13/closure-decorator-and-tail-recursive/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/02/24/from-c10k-to-coroutine/">From C10k to Coroutine</a></h1>
     
     
@@ -196,7 +242,7 @@ $(document).ready(function(){
   </header>
 
 
-  <div class="entry-content"><p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作图书笔记吧。</p>
+  <div class="entry-content"><p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作读书笔记吧。</p>
 
 </div>
   
@@ -572,54 +618,6 @@ PCA（Principal Components Analysis）,主成分分析。它是人脸识别、�
     <footer>
       <a rel="full-article" href="/blog/2014/01/11/listen-to-the-air/">Read on &rarr;</a>
     </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/08/a-test-post/">A Test Post</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-08T16:47:46+08:00" pubdate data-updated="true">Sep 8<span>th</span>, 2013</time>
-        
-        
-          | <a href="/blog/2013/09/08/a-test-post/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>some thing to write.</p>
-
-
-<p>&#8220;测试中文&#8221;，效果还行。</p>
-
-
-<p>爱因斯坦提出了质能方程：<script type="math/tex">E=mc^2</script>.他是一个伟大的物理学家.</p>
-
-
-<p>game over.</p>
-</div>
-  
   
 
 
