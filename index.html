@@ -170,6 +170,53 @@ $(document).ready(function(){
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/05/14/matlab-stuff/">Matlab 闲话</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-05-14T23:04:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2015</time>
+        
+        
+          | <a href="/blog/2015/05/14/matlab-stuff/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>matlab 调用c dll时,最可恨的是dll与matlab之间数据的交互，在dll中中获取的数据，如果内容比较大。那么回传数据的时候，是由matlab准备空间呢，
+还是dll中申请。经验是在dll中申请，并向matlab提供释放接口。</p>
+
+<p>这样matlab使用者就不必担心内存申请、释放问题（实际情况是matlab的使用者已经完全不知内存为何物），matlab的获取的空间是通过blank,zeros这种矩阵方式获得的，用起来比较别扭，还不容易凑够心仪大小buffer。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/05/14/matlab-stuff/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/03/13/closure-decorator-and-tail-recursive/">闭包，装饰器与尾递归</a></h1>
     
     
@@ -570,53 +617,6 @@ PCA（Principal Components Analysis）,主成分分析。它是人脸识别、�
   
     <footer>
       <a rel="full-article" href="/blog/2014/02/28/hello-uncle/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/01/11/listen-to-the-air/">Listen to the Air</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-11T01:59:40+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2014</time>
-        
-        
-          | <a href="/blog/2014/01/11/listen-to-the-air/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>sherlock深吸一口气双目深凝耳朵瞪大嘴角含笑身形飘逸才思敏捷之后：Watson,Moriaty gets me another case!啊?发生什么事情了么？神探的技能升级了！不仅能感受周围人思考时的annoying noise，而且能截获电波！再也不用担心手机没电，漏掉whip queen的求救短信了。</p>
-
-
-<p>这当然是个笑话。可是，怎么才能具有这种特殊本领呢？首先，你得具有计算能力，其次计算能力还得十分高效（否则你就提前一周交代好家人做好墓碑原地埋葬），再次还需要IT人士打造一款[贴心]安装的app。什么样的app?</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/01/11/listen-to-the-air/">Read on &rarr;</a>
     </footer>
   
 

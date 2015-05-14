@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>闭包，装饰器与尾递归 - When Winter Falls</title>
+  <title>matlab 闲话 - When Winter Falls</title>
   <meta name="author" content="tianyaqu">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive">
+  <link rel="canonical" href="http://tianyaqu.com/blog/2015/05/14/matlab-stuff">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -168,7 +168,7 @@ $(document).ready(function(){
   
   <header class="page-header">
     
-      <h1 class="entry-title">闭包，装饰器与尾递归</h1>
+      <h1 class="entry-title">Matlab 闲话</h1>
     
     
       <p class="meta">
@@ -184,7 +184,7 @@ $(document).ready(function(){
   
 
 
-<time datetime="2015-03-13T19:33:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2015</time>
+<time datetime="2015-05-14T23:04:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2015</time>
         
         
           | <a href="#comments">Comments</a>
@@ -194,87 +194,63 @@ $(document).ready(function(){
   </header>
 
 
-<div class="entry-content"><p>最近一周忙里偷闲，看着pdf学习Scala语言，算是初次接触函数式编程吧(如果不算python的foreach、迭代器与lamda表达式的话)。基本数据类型都是老生常谈了，函数式编程强调抛弃中间变量的做法在python中也算提前打了预防针，不过漫天遍地的新语法真让人开眼，比如古怪的占位符用法、不知所云的偏应用函数(partially applied function，书中的例子看起来好像在演示默认参数的用法)，以及一些奇技淫巧，比如String<em> 与 _</em>的不同妙用。总的感觉上是跟传统的语言(c/c++,java)在语法表达上都相差很远，读完不免有种囫囵吞枣的味道。</p>
+<div class="entry-content"><p>matlab 调用c dll时,最可恨的是dll与matlab之间数据的交互，在dll中中获取的数据，如果内容比较大。那么回传数据的时候，是由matlab准备空间呢，
+还是dll中申请。经验是在dll中申请，并向matlab提供释放接口。</p>
 
-<p>这里梳理下几个“高大上”的概念，结合一部分python语言的设计，聊一下闭包、尾递归，以及python的装饰器，如有理解错误欢迎指正。</p>
+<p>这样matlab使用者就不必担心内存申请、释放问题（实际情况是matlab的使用者已经完全不知内存为何物），matlab的获取的空间是通过blank,zeros这种矩阵方式获得的，用起来比较别扭，还不容易凑够心仪大小buffer。</p>
 
 <!--more-->
 
 
-<h2>1. 闭包与装饰器</h2>
+<h2>1. matlab与dll</h2>
 
-<p>闭包的定义：“闭包是由函数和与其相关的引用环境组合而成的实体”。好吧，说人话就是闭包是函数与函数环境组成的那一坨东西。Scala中函数是第一类值，不仅可以定义和调用，也能把他们像值那样传递。</p>
+<p>具体实现，可以采用Multilevel Pointers方式hack。 matlab的官方样例shrlibsample有提到这么个实例，但语焉不详。这里贴出详细步骤，以
+<a href="https://github.com/tianyaqu/mongodb-in-financial-market">mongodb-in-financial-market</a>中的例子来说一下。</p>
 
-<pre><code>var increase = (x: Int) =&gt; x + 1
-def inc(base:Int) =  (step: Int) =&gt; base + step
+<p>首先dll的接口要通过__declspec(dllexport)修饰，这里将其定义为EXPORT宏,这样在定义时候用EXPORT修饰，看起来自然的多。</p>
+
+<pre><code>#define EXPORT __declspec(dllexport)
+
+EXPORT int decompress(const char* market,unsigned char *compressed, struct TickData** result, unsigned int* out_len);
+EXPORT void free_mem(void* ptr);
 </code></pre>
 
-<p>前者得到的是函数类型的increase: Int => Int = &lt; function1 >,increase是函数变量，在Scala shell中输入increase可以查看其内容。inc函数的是结果是返回一个函数类型，它具有一个可配置参数x。闭包的作用就发挥出来了，比如，可以获得以不同base的inc函数。这样base 与 step都是可配置的。</p>
+<p>看到decompress的第三个参数result，为回传给matlab的buffer块首地址，二级指针是让使用者不必担心内存申请问题，只准备好一个指针大小空间，
+dll中会将它挂在malloc获得的空间上。最后一个参数提供了buffer长度out_len，用户只要注意不超出out_len就不会越界。</p>
 
-<pre><code>var inc_base_10 = inc(10)
-var result = inc_base_10(5) //step = 5
+<p>而调用者只需要准备好数据，二级指针和长度，然后利用回传的buffer和长度，根据offset遍历即可。</p>
+
+<pre><code>%dx为输入数据,对应compressed.
+compress_ptr = libpointer('uint8Ptr',dx);
+tickdDta_ptr = libpointer('TickData');
+len = libpointer('uint32Ptr',0);
+ret = calllib('decompress','decompress',db,compress_ptr,tickdDta_ptr,len);
+if ret == 0
+    for i = 1:len.Value
+    offset = i-1;
+    ptr = get(tickdDta_ptr + offset);
+    day = ptr.Value.ActionDay;
+    updatetime = ptr.Value.UpdateTime;
+    mill = ptr.Value.UpdateMillisec;
+    ...
+end
 </code></pre>
 
-<p>在python中，有了语法糖的帮助，闭包的一个常见用法是使用装饰器，来实现切面编程。</p>
+<h2>2. datenum与毫秒</h2>
 
-<pre><code>import time
-import functools
+<p>题外话。datenum处理毫秒问题。datenum不提供直接毫秒用毫秒构造时间，如：datenum(year,month,day,hour,minute,sec)，毫秒直接报错。
+不过可以将毫秒折算成单位天时间，补到秒级的datenum上去，这样得到的datenum实际上存储的即是毫秒级数据。</p>
 
-def timeit(func):
-    @functools.wraps(func)
-    def wrapper(para):
-        start = time.clock()
-        func(para)
-        end =time.clock()
-        print 'used:', end - start
-    return wrapper
-
-@timeit
-def work(para):
-    print para
-    #do something
-    pass
+<pre><code>dt = datenum(year,month,day,hour,minute,sec) + millsecond/(1000*60*60*24);
 </code></pre>
 
-<p>被timeit装饰的work任务可以方便的使用timeit提供的计算时间功能，达到重用代码的目的，任何想使用计时功能的模块只要加上timeit装饰器就行了。</p>
+<p>直接用datestr不能够显示毫秒数据，需要通过格式字符FFF来精确显示到毫秒</p>
 
-<h2>2. 尾递归</h2>
-
-<p>递归算是众所周知的概念。它不停的调用自身，在边界条件下返回结果并退出。计算阶乘和裴波那契数列使用递归已经是老生常谈。由于递归要保持每次调用的状态，期间使用的栈空间不释放，当调用次数较多时候，对内存压力很大。对处理速度要求高的场合都不建议使用递归，换由其他方式实现。</p>
-
-<p>那么尾递归呢？它是抓住了递归的痛点。它在本轮计算结束后，把本轮的结果也一并传递给了下轮，这样进入下轮计算时候，上轮的结果就没必要保持了。以计算阶乘为例：</p>
-
-<pre><code>factorialTailrec(5, 1)  //初始为1,传递给下轮1 * 5 = 5
-factorialTailrec(4, 5)  // 传递给下轮4 * 5 = 20
-factorialTailrec(3, 20) 
-factorialTailrec(3, 60) 
-factorialTailrec(2, 120) 
-factorialTailrec(1, 120) 
-120
+<pre><code>datestr(dt,'yyyy-mm-dd HH:MM:SS:FFF')
 </code></pre>
-
-<p>Scala可以自动实现尾递归的优化，Scala 编译器检测到尾递归就用新值更新函数参数，并把它替换成一个回到函数开头的跳转，所以不必担心使用尾递归的开销。不过Scala中尾递归的使用局限依然很大，JVM 指令集使实现更加先进的尾递归形式变得很困难。以下的两种情况，Scala不能优化:</p>
-
-<p>1.递归是间接的，两个函数相互调用</p>
-
-<pre><code>def isEven(x: Int): Boolean =
-    if (x == 0) true else isOdd(x - 1)
-def isOdd(x: Int): Boolean =
-    if (x == 0) false else isEven(x - 1)
-</code></pre>
-
-<p>2.函数调用是一个函数值</p>
-
-<pre><code>val funValue = nestedFun _
-def nestedFun(x: Int) {
-    if (x != 0) { println(x); funValue(x - 1) }
-}
-</code></pre>
-
-<p>虽然funValue的确是代表了nestedFun，但是很抱歉，这种优化Scala编译器不会认为它是尾递归，它只能优化形式上非常严格的尾递归。</p>
 </div>
 <div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive/</a></br>
+	<span>Original Link: <a rel="full-article" href="">http://tianyaqu.com/blog/2015/05/14/matlab-stuff/</a></br>
 	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://tianyaqu.com">tianyaqu</a> <span>
 </div>
 
@@ -298,14 +274,14 @@ def nestedFun(x: Int) {
   
 
 
-<time datetime="2015-03-13T19:33:00+08:00" pubdate data-updated="true">Mar 13<span>th</span>, 2015</time>
+<time datetime="2015-05-14T23:04:00+08:00" pubdate data-updated="true">May 14<span>th</span>, 2015</time>
 		
 		
 		
 		  <span class="categories">Posted in <a class='category' href='/blog/categories/编程思想/'>编程思想</a></span>
 		
 		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/scala/'>Scala</a>, <a class='tag' href='/blog/tags/python/'>python</a>, <a class='tag' href='/blog/tags/wei-di-gui/'>尾递归</a>, <a class='tag' href='/blog/tags/zhuang-shi-qi/'>装饰器</a>, <a class='tag' href='/blog/tags/bi-bao/'>闭包</a></span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/datenum/'>datenum</a>, <a class='tag' href='/blog/tags/dll/'>dll</a>, <a class='tag' href='/blog/tags/matlab/'>matlab</a>, <a class='tag' href='/blog/tags/mongodb/'>mongodb</a></span>
 		
     </p>
     
@@ -319,14 +295,10 @@ def nestedFun(x: Int) {
 	 <ul class="pager">
       
       <li class="previous"><a class="basic-alignment left"
-        href="/blog/2015/02/24/from-c10k-to-coroutine/" title="Previous Post:
-        from c10k to coroutine">&laquo; from c10k to coroutine</a></li>
+        href="/blog/2015/03/13/closure-decorator-and-tail-recursive/" title="Previous Post:
+        闭包，装饰器与尾递归">&laquo; 闭包，装饰器与尾递归</a></li>
       
       <li><a href="/blog/archives">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2015/05/14/matlab-stuff/"
-        title="Next Post: matlab 闲话">matlab 闲话
-        &raquo;</a></li>
       
     </ul>
     
@@ -334,7 +306,7 @@ def nestedFun(x: Int) {
     <section>
       <h1>Comments</h1>
       <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread" data-title="闭包，装饰器与尾递归"></div>
+<div class="ds-thread" data-title="Matlab 闲话"></div>
 <script type="text/javascript">
   var duoshuoQuery = {short_name:"tianyaqu"};
   (function() {
