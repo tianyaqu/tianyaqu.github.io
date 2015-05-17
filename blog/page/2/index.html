@@ -170,6 +170,56 @@ $(document).ready(function(){
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2014/04/10/seperate-a-sperable-filter/">分离一个核模板</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-10T20:54:40+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2014</time>
+        
+        
+          | <a href="/blog/2014/04/10/seperate-a-sperable-filter/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
+
+<script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
+
+
+<p>这样，如果能将滤波器（二维）转化成两个一维的乘积形式，计算量就降低到<script type="math/tex">2 \times M \times N</script>，这样会大大简化计算量，尤其是是当图像比较大的时候，计算量的优势就越明显。<a href="http://blog.csdn.net/zddblog/article/details/7450033">这篇文章</a>给出了不同高斯实现的性能比较。
+最典型的应用当属二维高斯滤波了，二维高斯核刚好等同于两个一维高斯的乘积，二维高斯核函数可以用一维的高斯核分别在x轴和y作卷积来代替。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/04/10/seperate-a-sperable-filter/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2014/02/28/hello-uncle/">Hello,Uncle?</a></h1>
     
     
@@ -263,54 +313,6 @@ $(document).ready(function(){
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2013/09/08/a-test-post/">A Test Post</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-08T16:47:46+08:00" pubdate data-updated="true">Sep 8<span>th</span>, 2013</time>
-        
-        
-          | <a href="/blog/2013/09/08/a-test-post/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>some thing to write.</p>
-
-
-<p>&#8220;测试中文&#8221;，效果还行。</p>
-
-
-<p>爱因斯坦提出了质能方程：<script type="math/tex">E=mc^2</script>.他是一个伟大的物理学家.</p>
-
-
-<p>game over.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
       <h1 class="entry-title"><a href="/blog/2013/09/08/hello-world/">Hello World</a></h1>
     
     
@@ -340,6 +342,79 @@ $(document).ready(function(){
   <div class="entry-content"><p>Welcome to <a href="http://zespia.tw/hexo">Hexo</a>! This is your very first post. Check <a href="http://zespia.tw/hexo/docs">documentation</a> to learn how to use.</p>
 </div>
   
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">基于能量的模型和波尔兹曼机</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-12T22:12:00+08:00" pubdate data-updated="true">Apr 12<span>th</span>, 2013</time>
+        
+        
+          | <a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
+所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
+基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
+
+
+
+
+<h2>1. 基于能量的模型(EBM)</h2>
+
+
+<p>基于能量的模型是一种具有普适意义的模型，可以说它是一种模型框架，在它的框架下囊括传统的判别模型和生成模型，图变换网络(Graph-transformer 
+Networks)，条件随机场，最大化边界马尔科夫网络以及一些流形学习的方法等。EBM通过对变量的每个配置施加一个有范围限制的能量来捕获变量之间的依赖
+关系。EBM有两个主要的任务，一个是推断(Inference)，它主要是在给定观察变量的情况，找到使能量值最小的那些隐变量的配置；另一个是学习(Learning)，
+它主要是寻找一个恰当的能量函数，使得观察变量的能量比隐变量的能量低。</p>
+
+
+
+
+<p>基于能量的概率模型通过一个能量函数来定义概率分布，
+<center>$p(x) = \frac{e^{E(x)}}{Z}.$ &#8230; ①</center>
+其中Z为规整因子，
+<center>$Z = \sum _{x} e^{-E(x)}.$ &#8230; ②</center>
+基于能量的模型可以利用使用梯度下降或随机梯度下降的方法来学习，具体而言，就是以训练集的负对数作为损失函数，
+<center>$l(\theta,D) = -L(\theta,D) = - \frac{1}{N}\sum_{x^{(i)}\in D} log p(x^{(i)}).$ &#8230; ③</center>
+其中$\theta$为模型的参数，将损失函数对$\theta$求偏导，
+<center>$\Delta = \frac{\partial l(\theta,D)}{\partial \theta} = - \frac{1}{N} \frac{\partial \sum log p(x^{(i)})}{\partial \theta}.$ &#8230; ④</center>
+即得到损失函数下降最快的方向。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">Read on &rarr;</a>
+    </footer>
   
 
 

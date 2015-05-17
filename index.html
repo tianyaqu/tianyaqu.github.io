@@ -170,6 +170,52 @@ $(document).ready(function(){
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/05/17/monte-carlo-simulation/">Monte Carlo模拟</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-05-17T14:30:00+08:00" pubdate data-updated="true">May 17<span>th</span>, 2015</time>
+        
+        
+          | <a href="/blog/2015/05/17/monte-carlo-simulation/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Monte Carlo在金融上的应用，一直想找个例子，百度给出的结果却都是老生常谈的算pi的例子，甚至李洋那本matlab量化也是如此。顺便批评一下这本书立意太低，matlab用法占了1/4,期权定价再重复一下赫尔书中的知识，最终竟然以均线交叉策略作例子结束。所以下面给出搜集的几个Monte Carlo在金融中的应用例子，以飨诸位。</p>
+
+<p>文中的思路来源于Columbia 大学 Martin Haugh 的<a href="http://www.columbia.edu/~mh2078/MonteCarlo.html">蒙塔卡罗模拟讲义</a>，如有理解不到位的地方，请指正。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/05/17/monte-carlo-simulation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/05/15/palm-identification-with-hmm/">玩一把HMM的掌纹识别</a></h1>
     
     
@@ -567,56 +613,6 @@ PCA（Principal Components Analysis）,主成分分析。它是人脸识别、�
   
     <footer>
       <a rel="full-article" href="/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/10/seperate-a-sperable-filter/">分离一个核模板</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-10T20:54:40+08:00" pubdate data-updated="true">Apr 10<span>th</span>, 2014</time>
-        
-        
-          | <a href="/blog/2014/04/10/seperate-a-sperable-filter/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
-
-<script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
-
-
-<p>这样，如果能将滤波器（二维）转化成两个一维的乘积形式，计算量就降低到<script type="math/tex">2 \times M \times N</script>，这样会大大简化计算量，尤其是是当图像比较大的时候，计算量的优势就越明显。<a href="http://blog.csdn.net/zddblog/article/details/7450033">这篇文章</a>给出了不同高斯实现的性能比较。
-最典型的应用当属二维高斯滤波了，二维高斯核刚好等同于两个一维高斯的乘积，二维高斯核函数可以用一维的高斯核分别在x轴和y作卷积来代替。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/10/seperate-a-sperable-filter/">Read on &rarr;</a>
     </footer>
   
 
