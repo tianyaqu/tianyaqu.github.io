@@ -3,7 +3,7 @@ layout: post
 title: "玩一把HMM的掌纹识别"
 date: 2015-05-15 22:13
 comments: true
-categories: [Machine Learning]
+categories: [Machine Learning,信号与图像]
 tags: [hmm,matlab,palmprint identification]
 ---
 上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。

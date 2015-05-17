@@ -2,7 +2,7 @@
 layout: post
 title: Listen to the air
 date: 2014-01-10 17:59:40
-categories: filter
+categories: 信号与图像
 tags: [调制,傅里叶变换]
 comments: true
 ---

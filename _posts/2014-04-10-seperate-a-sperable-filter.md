@@ -2,7 +2,7 @@
 layout: post
 title: 分离一个核模板
 date: 2014-04-10 12:54:40
-categories: filter
+categories: 信号与图像
 tags: [sperable filter,convolution]
 comments: true
 ---
