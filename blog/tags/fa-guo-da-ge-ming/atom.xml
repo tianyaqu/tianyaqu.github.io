@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 法国大革命 | When Winter Fell]]></title>
   <link href="http://tianyaqu.com/blog/tags/fa-guo-da-ge-ming/atom.xml" rel="self"/>
   <link href="http://tianyaqu.com/"/>
-  <updated>2015-05-24T13:21:34+08:00</updated>
+  <updated>2015-06-26T22:55:05+08:00</updated>
   <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -37,20 +37,24 @@ Roch（Chief Inspector）身上，后面的故事便通过他展开，通过重�
 
 <p>而 Roch 不能接受她的欺骗，放弃了她：</p>
 
-<p><blockquote><p>It breaks my heart to give you up,but no,I don't want you anymore.</p></blockquote></p>
+<p>{% blockquote %}
+It breaks my heart to give you up,but no,I don't want you anymore.
+{% endblockquote %}</p>
 
 <p>其实，Blanche 还是隐瞒了一些故事。她还有一个身份，是保皇派之间通递信件的邮差，绰号 “for the King”，开篇谋刺拿破仑的罪犯早就与她串同。这是一段悲伤的故事，只怪年轻时候 too yong too simple and always naive,不细说。简直是法国版李香君，身心俱投为陛下，犹骂无耻浪荡命！</p>
 
 <p>后来查案当中他审讯一个女孩，ruined by her uncle，他鼓励这个女孩好好活，比如他自己就不介意这些。此刻他想到的依然是 Blanche。</p>
 
 <p>结局呢， Roch 选择了他的青梅竹马。确实如他所愿：
-<blockquote><p>A pleasant,honest girl,a girl I could trust.</p></blockquote></p>
+{% blockquote %}
+A pleasant,honest girl,a girl I could trust.
+{% endblockquote %}</p>
 
 <p>不过 Blanche 应该是离开巴黎，离开这个是非地了。</p>
 
 <p>还是值得一看的小说。</p>
 
-<p><img src="/images/for-the-king-cover.jpg" title="book cover" ></p>
+<p>{% img /images/for-the-king-cover.jpg book cover %}</p>
 ]]></content>
   </entry>
   
