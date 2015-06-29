@@ -3,7 +3,7 @@ layout: post
 title: "matlab 闲话"
 date: 2015-05-14 23:04
 comments: true
-categories: 编程思想
+categories: [编程思想]
 tags: [matlab,mongodb,dll,datenum]
 ---
 matlab 调用c dll时,最可恨的是dll与matlab之间数据的交互，在dll中中获取的数据，如果内容比较大。那么回传数据的时候，是由matlab准备空间呢，
