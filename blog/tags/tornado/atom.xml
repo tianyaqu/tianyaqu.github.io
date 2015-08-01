@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: tornado | When Winter Fell]]></title>
   <link href="http://tianyaqu.com/blog/tags/tornado/atom.xml" rel="self"/>
   <link href="http://tianyaqu.com/"/>
-  <updated>2015-08-01T17:48:25+08:00</updated>
+  <updated>2015-08-01T23:31:21+08:00</updated>
   <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[tianyaqu]]></name>
@@ -27,13 +27,13 @@
 
 <p>项目地址<a href="https://github.com/tianyaqu/quora-python">在此</a></p>
 
-<p>{% img /images/a-zhihu-fork-home.png home page %}</p>
+<p><img src="/images/a-zhihu-fork-home.png" title="home page" ></p>
 
-<p>{% img /images/a-zhihu-fork-discovery.png discovery page %}</p>
+<p><img src="/images/a-zhihu-fork-discovery.png" title="discovery page" ></p>
 
-<p>{% img /images/a-zhihu-fork-topics.png topics page %}</p>
+<p><img src="/images/a-zhihu-fork-topics.png" title="topics page" ></p>
 
-<p>{% img /images/a-zhihu-fork-profile.png profile page %}</p>
+<p><img src="/images/a-zhihu-fork-profile.png" title="profile page" ></p>
 ]]></content>
   </entry>
   
