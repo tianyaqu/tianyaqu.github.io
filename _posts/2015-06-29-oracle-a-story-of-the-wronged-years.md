@@ -2,6 +2,7 @@
 layout: post
 title: "甲骨文-一些杂碎"
 date: 2015-06-29 21:04
+comments: true
 categories: [不求甚解]
 tags: [陈梦家,汉字,甲骨文]
 ---
