@@ -7,6 +7,4 @@ sharing: true
 footer: true
 ---
 
-由于相关政策法律法规，您察看的信息暂时无法访问。
-
-The information you request is not avaiable due to certain political restrictions.
+欢迎留言
