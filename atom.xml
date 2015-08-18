@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 layout: nil
 ---
@@ -24,4 +25,1098 @@ layout: nil
     <content type="html"><![CDATA[{{ post.content | expand_urls: site.url | cdata_escape }}]]></content>
   </entry>
   {% endfor %}
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2015-08-01T23:31:21+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[哼唱音乐检索系统]]></title>
+    <link href="http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system/"/>
+    <updated>2015-08-01T17:09:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system</id>
+    <content type="html"><![CDATA[<p>做这个项目纯粹是好玩。问题是这么来的，没事躺床上听歌，发现网易云音乐有个“听歌识曲”功能，对着手机唱了一段，然而并没有什么用。一度怀疑
+自己的演唱水平下降了，甚至开始怀疑人生。不过经过一番研究后，却为我打开了一扇知识的大门。</p>
+
+<p>原来网易不是让人唱歌识别的，它使用的是声纹识别技术，对音乐片段提取特征(傅立叶描述子)做哈希，也就是说对建好索引的音乐只有replay才能准确
+检索到，同一首歌的翻唱、清唱都不会当作同一首歌。</p>
+
+<p>原来我想要的是一个哼唱检索系统，学名叫 Query By Humming System,它与声纹识别的不同在于特征选取上。</p>
+
+<!--more-->
+
+
+<h2>歌曲特征的提取</h2>
+
+<p>声纹识别使用傅立叶描述子特征，我们知道，声音可以可做是多个三角波的叠加，根据傅立叶描述子可以重建原始信号。它提取了傅立叶特征本质上
+是对原始信号做了压缩，也可以看作是一个hash的过程。只有一模一样的声音才能得到一样的傅立叶特征。所以杨宗纬与孙燕姿的“雨天”在声纹识别看来
+就是两首歌。</p>
+
+<p>哼唱检索的的特征提取为一个叫音高(pitch)的特征，得到一个音高序列。音高这个名词其实是试图用数值化方法来描述人对音乐的理解，感兴趣的可以以[fundamental frequency,pitch]为关键字作为进一步的理解。这样，哼唱的音乐检索就是查询特征数据库中与该序列最接近的音高序列，其对应的即最可能
+哼唱的歌曲。</p>
+
+<p>此外，在pitch之上可以进一步提取特征，称为note特征，它其实是将pitch特征离散化，将音高固定在几个段位上。在时间段(t_i,t_i+1)之间音高为n,
+将pitch序列分割成(note,duration)这样的序列，与midi音乐格式暗合。</p>
+
+<p>不管是选pitch特征还是note特征，检索的任务就变成了两个时间序列的匹配过程，匹配的相似度以其距离来度量。
+一般来讲note特征匹配速度较快，但是精度低一些，所以常用算法都是将两者结合起来，利用note特征筛选出种子歌曲，在种子中再根据pitch特征匹配，
+根据两次的筛选结果联合打分。</p>
+
+<h2>时间序列的比较</h2>
+
+<p>linear scaling 和 dtw是常用的方法。这两个一个是线性拉伸，一个是动态规划求最优路径，老生常谈了。</p>
+
+<p>论文中看到有用高维数据索引的方式，这是第一次见到，不禁眼前一亮。采用方法叫做局部敏感哈希(Locality-Sensitive Hashing, LSH)，它将近似的序列尽量映射到一起，类似于找k近邻的k-d树，除了k-d树是固定维数的。这个方法会在后期加入我的系统中去。</p>
+
+<h2>存在的问题</h2>
+
+<p>时间序列的比较，算法的计算量会随着序列长度暴涨，所以就不适合对整首歌曲特征提取。不过，在多数应用场景中人会哼唱歌曲开头或副歌部分，
+所以对这两部分特征提取不失为一个好办法。然而，又引入一个问题，如何自动找出歌曲副歌部分?需要进一步研究。目前的实现只考虑了歌曲开头
+部分的特征。</p>
+
+<p>计算速度慢，可以考虑使用GPU加速查询速度，前期资料准备过程中，看到有几篇论文有实现，剩下的就是纯工程问题了。</p>
+
+<p>深度学习在图像领域运用的风生水起，语音与图像实在是有太多相似的地方，语音识别已经使用了深度学习取得不错的效果，哼唱检索却没有看到
+相关的论文，实在是可惜。</p>
+
+<p>目前只是一个雏形系统，速度与功能都不太满意，希望毕业前能把这个有意思的事情做好，详见<a href="https://github.com/tianyaqu/guess-your-song">你唱我猜</a>。</p>
+
+<p>TODO:</p>
+
+<ul>
+<li>提供web、微信使用接口</li>
+<li>副歌纳入提取特征</li>
+<li>计算速度优化</li>
+<li>深度学习方法研究</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[甲骨文-一些杂碎]]></title>
+    <link href="http://tianyaqu.com/blog/2015/06/29/oracle-a-story-of-the-wronged-years/"/>
+    <updated>2015-06-29T21:04:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/06/29/oracle-a-story-of-the-wronged-years</id>
+    <content type="html"><![CDATA[<p>我读书有个快捷方式，别人推荐的书不管多么富有盛名，随便翻看下就能看出个子丑寅卯来：作者的文笔如何、干货几分、才气几量，给个意会不言传的打分。故弄玄虚的，翻翻笑笑；话都说不明白的只好扔掉；内容新奇，史料丰富这样的往往能迅速抓取眼球吊足胃口。当然人参果子不能着急吃，还需要一些额外的小小准备：杯子水满上，桌椅滕挪利亮，再去厕所排泄一通，正襟危坐等待兔管家来叫我，然后随他掉进了兔子洞。</p>
+
+<p>甲骨文这本书是从图拉鼎那里淘到的，不过他读的是江城，勾起了我的注意，顺藤摸瓜找到了何伟的三部曲。这也就是题中故事的来历。</p>
+
+<!--more-->
+
+
+<p>《甲骨文》是四个故事的片段记录，有南下深圳的白领打工妹，江浙新城任教的一双恋人，某跨国小贩的灰色人生，还有甲骨文串起来的隐秘往事。故事里面的主人公彼此很少有交集，不过最终放在统一的时间轴上播放，算是90-00年代中国社会的管中一窥。个人比较中意的角色是威廉～杰斐逊～福斯特，一个放荡流氓青年也有明天的故事。我鼓励你自己去实地了解下情况。</p>
+
+<p>好吧，我们来聊一聊甲骨文的故事，这个故事出自多人之口，作者并没有赤裸裸的写出来。何伟这个假洋鬼子很会学习“不可说”的中国式脑回，给你讲个“听说&#8230;”的故事。我尝试把这个故事梳理一遍。</p>
+
+<p>陈家梦，新月派诗人，徐志摩失事前他任《新月诗刊》主编，后来研究古文学，建国后“分配”去考古，在夏商周断代工程开展工作。在那场著名的“引蛇出洞”的运动中，他站出来反对汉字拉丁话，于是被扣上了右派的帽子。然后是大家都知道的下场，下放到农村接受改造。最后在同事“打倒党敌伪学霸”的批斗中自杀。而最终，中国汉字的拉丁化最终也没有得以实施，根据接触当年情况的周有光透露的情况，也许只是因为老大哥建议毛不必急着拉丁化，中国化也很好嘛。民间俗语，螳臂当车车不停，无心插柳柳成荫之谓也。</p>
+
+<p>几个细节：</p>
+
+<ol>
+<li><p>美国敬老院的老太太还看书</p></li>
+<li><p>多学一门语言是可以改变世界观的 。我无比坚信这一点，但是唯独在学习计算机语言上却忘了这一茬</p></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[模仿一个问答网站]]></title>
+    <link href="http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website/"/>
+    <updated>2015-06-26T22:10:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website</id>
+    <content type="html"><![CDATA[<p>为了适应互联网发展的浪潮，捣鼓出一个问答网站出来。集成问答、timeline、好友、话题、问题关注，以及简陋的热门功能。
+采用tornado + mongodb实现，timeline使用push的方式，其中一些数据比如timeline没有使用redis存储，每次都是查询数据库获得，
+比较简陋，算是学习web开发的一个实验品吧。设计的思路来自<a href="https://github.com/renxing/quora-python">这个</a> 以及 ruby-china。</p>
+
+<!--more-->
+
+
+<p>项目地址<a href="https://github.com/tianyaqu/quora-python">在此</a></p>
+
+<p><img src="http://tianyaqu.com/images/a-zhihu-fork-home.png" title="home page" ></p>
+
+<p><img src="http://tianyaqu.com/images/a-zhihu-fork-discovery.png" title="discovery page" ></p>
+
+<p><img src="http://tianyaqu.com/images/a-zhihu-fork-topics.png" title="topics page" ></p>
+
+<p><img src="http://tianyaqu.com/images/a-zhihu-fork-profile.png" title="profile page" ></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rcpp开发R包]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/24/develop-r-packages-with-rcpp/"/>
+    <updated>2015-05-24T11:43:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/24/develop-r-packages-with-rcpp</id>
+    <content type="html"><![CDATA[<p>最近一直在忙着做一个金融数据库系统的设计开发工作（当然不是database implementation了）。用mongodb搭建，能自动化导入数据并给不同语言提供查询接口。所以这个月俨然成为一个胶水匠，不停的给各个语言写wrapper。敌方阵营派出python、matlab、R与我交锋，史称“三英战tianyaqu”，奈何某技高一筹，均被我一一杀退。关于R开发的网上资料(中文)着实太少，统计之都上面给出的都是难度与官方timesTwo旗鼓相当的花拳绣腿。下面给出一些个人的浅薄经验，希望能给后人一些思路。</p>
+
+<p>这当然不能作为一个开发R包的系统描述，Dirk Eddelbuettel大神给出的Rcpp <a href="http://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-extending.pdf">tutorial A</a> 和 <a href="http://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-package.pdf">tutorial B</a> 早已彪炳千秋，当然如果你想知道更详细、全面的底层实现，官方的<a href="http://cran.r-project.org/doc/manuals/r-release/R-exts.html">Writing R Extensions</a> 也是个不错的参考。</p>
+
+<!--more-->
+
+
+<p>在R上扩展，目的无外乎这：提高运算速度，功能依赖(第三方库) ，代码复用。我算是第三种，虽然我反对这个做法，奈何做不了决定。所以就把alternative<a href="https://github.com/tianyaqu/mongodb-in-financial-market">开源</a>了。:)</p>
+
+<h3>数据交换</h3>
+
+<p>R提供的扩展实现了一种机制，所有的对象都可以用SEXP来传递。但这仍然有点繁琐，从SEXP到C/C++的对象需要频繁使用PROTECT避免变量被R的垃圾回收机制收割，然后使用诸如REAL(), INTEGER()来访问裸数据。在使用RCPP后，生活就变得非常简单，将接口函数用EXPORT出去，就可以被RCPP无缝包装，内部实现就可以完全使用C++的语法搭房子。如何要使用第三方库，直接裹上一层包装，在其中调用第三方库与普通的用法没什么两样。而这最终就被自动翻译成R提供的SEXP体系去，用户就免去了关注SEXP系统的劳苦。</p>
+
+<p>下面的代码片段是调用第三方的例子，它实现wrapper的功能。可以看到我们的wrapper接口直接使用的是std::string格式，没有使用SEXP。与此相反，需要从c++回传给R的时候，Rcpp::CharacterVector,Rcpp::NumericVector,Rcpp::DataFrame 可以帮我们传递字符串向量、数值向量甚至是data.frame。指针(reference-like)也可以通过NumericVector实现，只不过是只操作vector的首元素罢了。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//' @param so many... 
+</span><span class='line'>//' @export
+</span><span class='line'>
+</span><span class='line'>// [[Rcpp::export]]
+</span><span class='line'>DataFrame R_GetTicks(std::string market,std::string contractId, unsigned start, unsigned end, int limit)
+</span><span class='line'>{
+</span><span class='line'>    struct Tick* result_buffer = 0;
+</span><span class='line'>    unsigned len = 0,i = 0;
+</span><span class='line'>    //调用第三方library,或者functions
+</span><span class='line'>    int ret = m_GetTicks(&result_buffer,&len,market.c_str(),contractId.c_str(), start, end, limit);
+</span><span class='line'>    
+</span><span class='line'>    ....
+</span><span class='line'>    //manipulate result buffer to create dataframe
+</span><span class='line'>    ....
+</span><span class='line'>    return df
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由于提供rcpp提供c++的环境，就可以完全利用C++的遗产，呼风唤雨都不是梦想。数据序列化反序列化、网络连接什么的都是小菜一叠，没什么不可能，只有发挥你的想象力。Rcpp最终利用Call机制给R提供接口。 mongoquery_R_GetTicks是Rcpp做的Name mangling，是wrapper被翻译后的名字。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>R_GetTicks &lt;- function(market, contractId, start, end, limit) {
+</span><span class='line'>    .Call('mongoquery_R_GetTicks', PACKAGE = 'mongoquery', market, contractId, start, end, limit)
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三方库</h3>
+
+<p>由于R只接受GCC系的工具链，在linux下面不成什么问题，在win成了大问题，这意味着项目依赖的所有第三方库都需要用rtools(其实它也是mingw工具套装)编译链接。所幸的是，多数的优秀第三方库都可以在mingw编译通过(比如boost,MLPACK)。只消用Makevars.win将依赖库(mingw compiled)加入即可。</p>
+
+<pre><code>#BOOST_INC为设置的系统变量，可以使用诸如-IE:/src/boost/inc 方式导入头文件依赖，
+#lib path同理
+PKG_CPPFLAGS= -I$(BOOST_INC)
+PKG_LIBS =  -L../lib -lboost_xxx 
+</code></pre>
+
+<p>最终注意package发布时候要将使用的库一块发布。</p>
+
+<h3>工具</h3>
+
+<h4>1.rstudio</h4>
+
+<p>rstudio已经是标配了吧，支持舒心地r package开发。直接使用Rcpp.package.skeleton也无伤大雅，不过注意namespace文件需要手动更改。rstudio的不足在于写cpp代码时候不顺心，老迈的像微软官方记事本。</p>
+
+<h4>2.qtcreator</h4>
+
+<p>qtcreator 支持建立标准c/c++项目，协助c++部分的开发与调试。它支持自主选择工具链，选择rtools的工具链(或者将qtcreator的工具链作为rstudio的工具链)，选好工具链，可以编译第三方依赖库丢给Rcpp链接。</p>
+
+<p>这次意外的收获是发现mingw对win的支持如此之好。项目用到了lzma压缩算法，7zip lzma sdk只提供了msvc的编译工程，翻了下代码，其压缩、解压缩使用了win的多线程，原以为路子就此断了，摩拳擦掌正准备将pylzma(基于7zip lzma sdk) 移植到标准过来，做一件利国利民的好事。却发现pylzma的多线程模块作者根本没作改动，而pylzma 支持mingw作为编译核心。于是依样画瓢，获得lzma库+1。</p>
+
+<p>稍微dig下，原来mingw 使用原生w32api提供运行环境(Crgwin 做的是POSIX emulation,基于X Server的program唯一选择)</p>
+
+<blockquote><p>As MinGW uses the standard Microsoft C runtime library which comes with Windows，you should be careful and use the correct function to generate a new thread.</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Monte Carlo模拟]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/17/monte-carlo-simulation/"/>
+    <updated>2015-05-17T14:30:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/17/monte-carlo-simulation</id>
+    <content type="html"><![CDATA[<p>Monte Carlo在金融上的应用，一直想找个例子，百度给出的结果却都是老生常谈的算pi的例子，甚至李洋那本matlab量化也是如此。顺便批评一下这本书立意太低，matlab用法占了1/4,期权定价再重复一下赫尔书中的知识，最终竟然以均线交叉策略作例子结束。所以下面给出搜集的几个Monte Carlo在金融中的应用例子，以飨诸位。</p>
+
+<p>文中的思路来源于Columbia 大学 Martin Haugh 的<a href="http://www.columbia.edu/~mh2078/MonteCarlo.html">蒙塔卡罗模拟讲义</a>，如有理解不到位的地方，请指正。</p>
+
+<!--more-->
+
+
+<p>蒙塔卡罗是可以看作是大数定律的具体应用。前提条件是，要生成的千千万万的随机值，对于这些随机值的用法，有两种选择。一种是投点法，一种是期望法。投点法就是pi的例子，在2x2的方格里生成2n个随机值(n个随机点P(xi,yi)，也即是个2n个)，计算落入圆内外的点数目之比即为4/pi的估计。</p>
+
+<p>期望法与此稍有不同，它只要n个随机值即可，计算f(x)的算是平均即是所求。原理是这样的：随机变量 X 服从[0,1]上的均匀分布，则Y=f(X)的数学期望为  <center>$E(f(X)) = \int^1_0 f(x)dx = J$  </center>所以估计J的值就是估计f(X)的数学期望值，由辛钦大数定律，可以用f(X)的观察值的均值取估计f(X)的数学期望。下面用几个例子来阐述</p>
+
+
+<h4>1.积分计算</h4>
+
+<p> 算阴影面积,其中$f = \int^1_0 x^3 dx$ ，用上述的期望法计算</p>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>n=500;
+</span><span class='line'>x = rand(n,1);
+</span><span class='line'>g = x.^3;
+</span><span class='line'>estimate = mean(g);
+</span><span class='line'>% or simply
+</span><span class='line'>% estimate = mean(rand(100,1).^3);</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>2.资产定价</h3>
+
+<p>假定某股票价格遵从几何布朗运动，那么股票在任意时刻T的价格可用 SDE(stochastic differential equation)解出，它的解析解为
+<center>$S_T = S_0 e^{(µ−\sigma^2/2)T+\alpha B_T}$</center>
+u,\sigma为收益率、波动率，$B_T$代表着维纳过程，即高斯随机量(期望为0的正态分布)。与该股票关联的一衍生品，如果我们知道(假定)在时刻T收益为H(X),根据风险中性原则，它的初始价格
+$h_0$满足
+<center>$h_0 = E_{0}^{Q}[e^{-rT}h(X)]$</center>
+也即衍生品的价格(解析解)。</p>
+
+
+<p>
+OK，现在我们要计算一执行价K，到期时间为T的欧式期权的价格$C_0$。首先，利用上文的结论，可以得到$C_0$为：
+<center>$C_0 = e^{-rT}E_{0}^{Q}[max(0,S_{0}e^{(r-\sigma^2/2)T+\sigma B_{T}}-K)]$</center>
+E_{0}^{Q}[.]表示其期望。
+</p>
+
+
+<p>那么，期权价格的数值解计算过程为</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>set sum = 0
+</span><span class='line'>for i = 1 to n
+</span><span class='line'>    %代入解析表达式求值
+</span><span class='line'>    generate S_T
+</span><span class='line'>    set sum = sum + max (0, S_T − K)
+</span><span class='line'>set Cc0 = e_{−rT}( sum/n)</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>3.组合收益率</h3>
+
+<p>根据组合内股票相关与不相关，可以分成两个问题。先从简单的不相关说起。</p>
+
+<h4>3.1 独立组合</h4>
+
+<p>现在我们有多只股票，这里以两只为例，分别为A,B，两者相互独立，都服从几何布朗运动。$S_{a}(t)$,$S_{b}(t)$为A,B在t时刻价格，开始时候(t = 0)，我们购买了$n_a$单位A,$n_b$单位B，此时组合价值为
+<center>$W_T = n_{a}S_{a}(T) + n_{b}S_{b}(T)$</center>
+那么，我们把这些代入Monte Carlo框架中来
+</p>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sum = 0
+</span><span class='line'>for i = 1 to n
+</span><span class='line'>    generate $X_i = (S_{a}^{i}(T),S_{b}^{i}(T))$
+</span><span class='line'>    $sum += W_T$
+</span><span class='line'>$E(W_T) = sum/n$
+</span><span class='line'>r = E(W_T)/W_0 - 1</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>3.2 相关组合</h4>
+
+<p>下面讨论相关的情况。首先要明确怎么才算相关？对于几何布朗运动来讲，相关用$B_t$项的协方差来度量。这个量是个服从正态分布的变量(不要认为随机就独立了，只有为0时候才认为它们独立)，用协方差来度量他们的相关程度。由于该项是股价的动力，股价也作用于收益率上，所以用收益率来衡量两只股票的相关性。
+</p>
+
+
+<p>
+其次，要利用一个结论。概率论上讲过，多个正态分布的线性组合仍然是正态分布，那么多只相关股票的联合效果为($B_t$项是期望为0的正态分布)：
+<center>$c_1Z_1 + &#8230; c_nZ_n \sim N(0,\sigma^2)$</center>
+这个式子要反过来看，即在已知组合的协方差矩阵后(收集组合内各只股票的历史收益率数据，计算协方差得到)，如何获得各个分布的系数(或权重)$c_n$？
+</p>
+
+
+<p>可喜的是，数学系的人帮我们在这里接下了担子。首先将问题的描述更具体化:
+<center>$C^TZ \sim N(0,C^TC)$</center>
+也就是，只要能获得$C$,使得$C^TC = \sum$,那么就认为找到了前面要用的系数$c_n$,${\sum}$为协方差矩阵,而这一步，只要用Cholesky分解即可得出。
+</p>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function[theta] = portfolio_evaluation(mua,mub,siga,sigb,n,T,rho,S0a,S0b,na,nb);
+</span><span class='line'>% This function estimates the probability that the portfolio value, W_T, falls
+</span><span class='line'>% by more than 10%. n is the number of simulated values of W_T that we use.
+</span><span class='line'>W0 = na*S0a + nb*S0b;
+</span><span class='line'>Sigma = [siga^2 siga*sigb*rho;
+</span><span class='line'>siga*sigb*rho sigb^2];
+</span><span class='line'>B = randn(2,n);
+</span><span class='line'>C = chol(Sigma);
+</span><span class='line'>V = C’ * B;
+</span><span class='line'>STa = S0a * exp((mua - (siga^2)/2)*T + sqrt(T)*V(1,:));
+</span><span class='line'>STb = S0b * exp((mub - (sigb^2)/2)*T + sqrt(T)*V(2,:));
+</span><span class='line'>WT = na*STa + nb*STb;
+</span><span class='line'>theta = mean(WT/W0) - 1;</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[玩一把HMM的掌纹识别]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm/"/>
+    <updated>2015-05-15T22:13:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm</id>
+    <content type="html"><![CDATA[<p>上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。</p>
+
+<p>看到这个题目的人，如果对马尔科夫模型有所了解的话，一定会很奇怪，马尔科夫模型建立的两个关键要素是观测序列与状态转移，这怎么体现在掌纹上呢？</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>说起来，这个理论最早是从人脸识别上搬运过来的。将人脸图像从上到下分成若干个子块，这些子块自上而下依次组成观测序列，每个子块所蕴涵的信息被当作状态。这个状态可以这么理解，它是由人脸的生物特征，比如相互位置、颜色、形状等在统计意义上的抽象。也即是，认为“状态”蕴含了人脸的生物特征，但是具体蕴含哪些？有多大关联却并不作直接解释(如果你知道合理的解释，请务必指导我)。</p>
+
+<p>如此，对人脸图像进行切分，得到一系列的子块，作为观测序列。我们知道，马尔科夫模型有这么几个应用场景。</p>
+
+<pre><code>1.根据模型参数与观测序列，求观测序列出现的概率
+2.已知观测序，估计模型参数
+3.根据模型和观测序，求最可能的状态序列
+</code></pre>
+
+<p>首先，我们面临的是第二种问题。我们认为用马尔科夫模型可以描述切片序列的变化规律，根据这些切片序列推断模型参数，这是参数估计问题，也是个无监督学习过程，经常用Baum-Welch算法训练得到参数。</p>
+
+<p>然后是关键的一步。当新来的人脸图片时候，首先对其切片获得观测序列，利用第一步中获取的模型参数，计算其可能的状态及其似然值，作为分类的依据。这对应上述第三种问题，可以用维特比算法求解。</p>
+
+<h2>训练</h2>
+
+<p>掌纹识别即与人脸的识别方法完全相同，不过还有一些细节需要阐述下。由于马尔科夫模型的观测变量与状态变量是离散的，所以要找到一种方法将连续的“切片”离散化。</p>
+
+<p>矩阵的奇异值向量具有稳定性、位移不变、旋转不变等优良特性，可以用来很好的描述矩阵，所以选取它作为“切片”数据的特征。进一步，将这些特征使用k-means聚类，聚类的标号作为该切片的“状态”。用户需要自己决定状态数目，以及观测概率的分布数量。不过据一篇来自清华的论文&#8221;DSW Feature Based Hidden Marcov Model: An Application on Object Identification&#8221;的实验结果，状态在6-7时候效果较佳。</p>
+
+<h2>识别</h2>
+
+<p>按照训练一节，对每一个人训练出一套模型参数。对于新来的待识别图像，切片、奇异值分解、状态分类。分类使用欧几里德距离方式确定，根据它与不同分类的中心距离，取最近的作为类标号。这样便获得一个基于类标号的观测序列，将它代入各个用户模型分别计算其最大似然值(场景三)，取其最大似然值作为识别的结果。</p>
+
+<h2>实现</h2>
+
+<p>见我的 github repo <a href="https://github.com/tianyaqu/palm-identification-with-hmm">palm-identification-with-hmm</a></p>
+
+<h2>结果与改进</h2>
+
+<p>使用PolyU的<a href="http://www4.comp.polyu.edu.hk/~biometrics/">Palmprint Database</a>进行实验，为标准化的128*128图，省去了预处理过程。</p>
+
+<p>据实验结果，在4人的识别中，效果可以达到60-70%，人数再多效果就很快急剧下降，不忍直视。
+可从如下两个方面着手：</p>
+
+<p>1.模型训练时候的初始观测概率分布使用了随机值，导致结果会有跳动。可以考虑在不同初始值情况下，通过多次迭代找出最优的模型参数，后续不再训练。</p>
+
+<p>2.模型的可解释性。由于模型中的状态并没有直接对应的物理意义，颇有点类似神经网络的神经元个数的意味。进一步提高识别率需要与其他方法结合。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[matlab 闲话]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/14/matlab-stuff/"/>
+    <updated>2015-05-14T23:04:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/14/matlab-stuff</id>
+    <content type="html"><![CDATA[<p>matlab 调用c dll时,最可恨的是dll与matlab之间数据的交互，在dll中中获取的数据，如果内容比较大。那么回传数据的时候，是由matlab准备空间呢，
+还是dll中申请。经验是在dll中申请，并向matlab提供释放接口。</p>
+
+<p>这样matlab使用者就不必担心内存申请、释放问题（实际情况是matlab的使用者已经完全不知内存为何物），matlab的获取的空间是通过blank,zeros这种矩阵方式获得的，用起来比较别扭，还不容易凑够心仪大小buffer。</p>
+
+<!--more-->
+
+
+<h2>1. matlab与dll</h2>
+
+<p>具体实现，可以采用Multilevel Pointers方式hack。 matlab的官方样例shrlibsample有提到这么个实例，但语焉不详。这里贴出详细步骤，以
+<a href="https://github.com/tianyaqu/mongodb-in-financial-market">mongodb-in-financial-market</a>中的例子来说一下。</p>
+
+<p>首先dll的接口要通过__declspec(dllexport)修饰，这里将其定义为EXPORT宏,这样在定义时候用EXPORT修饰，看起来自然的多。</p>
+
+<pre><code>#define EXPORT __declspec(dllexport)
+
+EXPORT int decompress(const char* market,unsigned char *compressed, struct TickData** result, unsigned int* out_len);
+EXPORT void free_mem(void* ptr);
+</code></pre>
+
+<p>看到decompress的第三个参数result，为回传给matlab的buffer块首地址，二级指针是让使用者不必担心内存申请问题，只准备好一个指针大小空间，
+dll中会将它挂在malloc获得的空间上。最后一个参数提供了buffer长度out_len，用户只要注意不超出out_len就不会越界。</p>
+
+<p>而调用者只需要准备好数据，二级指针和长度，然后利用回传的buffer和长度，根据offset遍历即可。</p>
+
+<pre><code>%dx为输入数据,对应compressed.
+compress_ptr = libpointer('uint8Ptr',dx);
+tickdDta_ptr = libpointer('TickData');
+len = libpointer('uint32Ptr',0);
+ret = calllib('decompress','decompress',db,compress_ptr,tickdDta_ptr,len);
+if ret == 0
+    for i = 1:len.Value
+    offset = i-1;
+    ptr = get(tickdDta_ptr + offset);
+    day = ptr.Value.ActionDay;
+    updatetime = ptr.Value.UpdateTime;
+    mill = ptr.Value.UpdateMillisec;
+    ...
+end
+</code></pre>
+
+<h2>2. datenum与毫秒</h2>
+
+<p>题外话。datenum处理毫秒问题。datenum不提供直接毫秒用毫秒构造时间，如：datenum(year,month,day,hour,minute,sec)，毫秒直接报错。
+不过可以将毫秒折算成单位天时间，补到秒级的datenum上去，这样得到的datenum实际上存储的即是毫秒级数据。</p>
+
+<pre><code>dt = datenum(year,month,day,hour,minute,sec) + millsecond/(1000*60*60*24);
+</code></pre>
+
+<p>直接用datestr不能够显示毫秒数据，需要通过格式字符FFF来精确显示到毫秒</p>
+
+<pre><code>datestr(dt,'yyyy-mm-dd HH:MM:SS:FFF')
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[闭包，装饰器与尾递归]]></title>
+    <link href="http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive/"/>
+    <updated>2015-03-13T19:33:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive</id>
+    <content type="html"><![CDATA[<p>最近一周忙里偷闲，看着pdf学习Scala语言，算是初次接触函数式编程吧(如果不算python的foreach、迭代器与lamda表达式的话)。基本数据类型都是老生常谈了，函数式编程强调抛弃中间变量的做法在python中也算提前打了预防针，不过漫天遍地的新语法真让人开眼，比如古怪的占位符用法、不知所云的偏应用函数(partially applied function，书中的例子看起来好像在演示默认参数的用法)，以及一些奇技淫巧，比如String<em> 与 _</em>的不同妙用。总的感觉上是跟传统的语言(c/c++,java)在语法表达上都相差很远，读完不免有种囫囵吞枣的味道。</p>
+
+<p>这里梳理下几个“高大上”的概念，结合一部分python语言的设计，聊一下闭包、尾递归，以及python的装饰器，如有理解错误欢迎指正。</p>
+
+<!--more-->
+
+
+<h2>1. 闭包与装饰器</h2>
+
+<p>闭包的定义：“闭包是由函数和与其相关的引用环境组合而成的实体”。好吧，说人话就是闭包是函数与函数环境组成的那一坨东西。Scala中函数是第一类值，不仅可以定义和调用，也能把他们像值那样传递。</p>
+
+<pre><code>var increase = (x: Int) =&gt; x + 1
+def inc(base:Int) =  (step: Int) =&gt; base + step
+</code></pre>
+
+<p>前者得到的是函数类型的increase: Int => Int = &lt; function1 >,increase是函数变量，在Scala shell中输入increase可以查看其内容。inc函数的是结果是返回一个函数类型，它具有一个可配置参数x。闭包的作用就发挥出来了，比如，可以获得以不同base的inc函数。这样base 与 step都是可配置的。</p>
+
+<pre><code>var inc_base_10 = inc(10)
+var result = inc_base_10(5) //step = 5
+</code></pre>
+
+<p>在python中，有了语法糖的帮助，闭包的一个常见用法是使用装饰器，来实现切面编程。</p>
+
+<pre><code>import time
+import functools
+
+def timeit(func):
+    @functools.wraps(func)
+    def wrapper(para):
+        start = time.clock()
+        func(para)
+        end =time.clock()
+        print 'used:', end - start
+    return wrapper
+
+@timeit
+def work(para):
+    print para
+    #do something
+    pass
+</code></pre>
+
+<p>被timeit装饰的work任务可以方便的使用timeit提供的计算时间功能，达到重用代码的目的，任何想使用计时功能的模块只要加上timeit装饰器就行了。</p>
+
+<h2>2. 尾递归</h2>
+
+<p>递归算是众所周知的概念。它不停的调用自身，在边界条件下返回结果并退出。计算阶乘和裴波那契数列使用递归已经是老生常谈。由于递归要保持每次调用的状态，期间使用的栈空间不释放，当调用次数较多时候，对内存压力很大。对处理速度要求高的场合都不建议使用递归，换由其他方式实现。</p>
+
+<p>那么尾递归呢？它是抓住了递归的痛点。它在本轮计算结束后，把本轮的结果也一并传递给了下轮，这样进入下轮计算时候，上轮的结果就没必要保持了。以计算阶乘为例：</p>
+
+<pre><code>factorialTailrec(5, 1)  //初始为1,传递给下轮1 * 5 = 5
+factorialTailrec(4, 5)  // 传递给下轮4 * 5 = 20
+factorialTailrec(3, 20) 
+factorialTailrec(3, 60) 
+factorialTailrec(2, 120) 
+factorialTailrec(1, 120) 
+120
+</code></pre>
+
+<p>Scala可以自动实现尾递归的优化，Scala 编译器检测到尾递归就用新值更新函数参数，并把它替换成一个回到函数开头的跳转，所以不必担心使用尾递归的开销。不过Scala中尾递归的使用局限依然很大，JVM 指令集使实现更加先进的尾递归形式变得很困难。以下的两种情况，Scala不能优化:</p>
+
+<p>1.递归是间接的，两个函数相互调用</p>
+
+<pre><code>def isEven(x: Int): Boolean =
+    if (x == 0) true else isOdd(x - 1)
+def isOdd(x: Int): Boolean =
+    if (x == 0) false else isEven(x - 1)
+</code></pre>
+
+<p>2.函数调用是一个函数值</p>
+
+<pre><code>val funValue = nestedFun _
+def nestedFun(x: Int) {
+    if (x != 0) { println(x); funValue(x - 1) }
+}
+</code></pre>
+
+<p>虽然funValue的确是代表了nestedFun，但是很抱歉，这种优化Scala编译器不会认为它是尾递归，它只能优化形式上非常严格的尾递归。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[from c10k to coroutine]]></title>
+    <link href="http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine/"/>
+    <updated>2015-02-24T15:36:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine</id>
+    <content type="html"><![CDATA[<p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作读书笔记吧。</p>
+
+<!--more-->
+
+
+<p>先理一下常见模型。从最常见的网络编程教程的玩具程序开始讲起。服务端绑定、监听后，客户端连接过来，Alice与Bob就开始光天化日的眉来眼去。这只能是玩具，因为只能同时服务一个用户，在当前客户端断开前，其他客户的请求是看不到的。</p>
+
+<p>然后就有了fork-per-client（正是linux环境编程里举的例子），以及它的变形thread-per-client。即起一个进程或者线程处理请求，这两种是换汤不换药的做法。进程和线程都是需要消耗系统资源的，拿线程来讲，一个线程默认栈空间是10m,在32位系统上只能起300左右线程。离10k相差甚远。</p>
+
+<p>然后使用select/poll，epoll这一套先进生产力工具。select/poll同时服务的客户端增大了，但仍然不够。epoll每次得到活跃fd即可。根据fd号，将请求分发到accept或者handler上，这就是鼎鼎大名的Reactor模式。已经能出色应付得了多数网站需求了。可是，对于耗费cpu的操作，其他客户的请求也不能满足了，所以引入了多线程，多招几个能干活的伙计，把干活的与接客的分开。</p>
+
+<p>线程池就是这些伙计们，用Eventloop把干活的与接客的分开，如果活重，辛好还有别的伙计能顶替，同时每个伙计可也做好几件事情(Eventloop)，但不会把接客的任务给耽误了。这个就是陈硕最终提倡的模型：Reactor + Threadpool + one Eventloop per Thread.陈硕的书讲了很多，除开一些经验之谈（怎么做才较好，智能指针实现RAII手法读来让人心旷神怡），Eventloop与Threadpool当是核心了。</p>
+
+<p>多线程一出现，考虑问题脑子就要多转个弯。不得不注意异步，事件的顺序也不能想当然了。前段时间刚好给我埋了个小坑。要作的事情很简单，是在app启动时候，往redis写点关键数据进去。由于网络环境问题，有时候没写成功，所以要加入重试功能，失败了最多再试三次。用的client刚好是个异步接口实现，这下懵了，结果是什么、什么时候出来不知道，sleep原地等待肯定是行不通的。client的callback倒是可以看到结果，可是执行都是在其他线程的，通知本进程只能用ipc了，有点杀鸡用牛刀的嫌疑，并且为了等结果本进程还是得阻塞才行。</p>
+
+<p>后来问了神牛，说这种用coroutine实现最好了，这当然是不可能的（先天无力）。最后只能用笨方法，callback里面继续使用client查询,为了存储尝试次数，不得不裹了一层。</p>
+
+<pre><code>callback(context* r,void* para)
+{
+    if(r-&gt;result != "ok")
+    {
+        if(para-&gt;time-- &gt; 0)
+        {
+            asyncClient client
+            client.query(callback,para)
+        }
+    }
+}
+
+app()
+{
+    Para para
+    para.time = 3
+    asyncClient client
+    client.query(callback,&amp;para)
+    do_other_stuff()
+}
+</code></pre>
+
+<p>coroutine在tornado里面见过，作为一个装饰器出现。从作用上来看，是把异步调用同步化，把单线程当多线程用，处理上面的问题刚好是顺心趁手的，可惜没有巨人焉能成为牛顿。在python中有yield这种语言级支持，可也轻松实现，在c/c++中，看到两种实现。一种是基于上下文切换的，使用Setcontext族函数保存上下文跳转，比如<a href="https://github.com/cloudwu/coroutine">云风的实现</a>。当然还有一种逆天的实现，使用类似goto语句的跳转(比如<a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html">这里</a>)，例如包裹switch case的宏，著名的实现是 boost::asio::coroutine。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A new day has come]]></title>
+    <link href="http://tianyaqu.com/blog/2015/01/19/a-new-day-has-come/"/>
+    <updated>2015-01-19T01:17:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/01/19/a-new-day-has-come</id>
+    <content type="html"><![CDATA[<p>This is an empty post,all the blanks will be filled later.
+Hope will get a nice and sweat dream,I&#8217;m seaking the possiblity that
+all my drems will one day come true.
+Thank your for all your carings,I really appreciate it.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[For The King]]></title>
+    <link href="http://tianyaqu.com/blog/2014/11/03/for-the-king/"/>
+    <updated>2014-11-03T15:24:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/11/03/for-the-king</id>
+    <content type="html"><![CDATA[<p>这是一本小说，年初亚马逊打折时候买的囤货，弥补一下《冰与火之歌》新卷迟迟未出导致的书荒。看名字以为是Lord与Knight刀光剑影类型的故事，
+一次随意看到封面介绍提到拿破仑，还有漂亮的封面女主，突然觉得自己想错了，这故事应该是近代的，说不定是当时法国上层的名人轶事。直到开始看，
+竟然不能自拔，一口气看完，意犹未尽。没有中古时期力量与血腥，也没有拿破仑力拔山兮气盖世、横扫欧洲列强的波澜壮阔，不过从一个清醒的小人物
+视角讲述当时的人物与风情。还是符合我的口味。</p>
+
+<!--more-->
+
+
+<p>故事开始了。有人在街道上预先安排好一辆马车，里面装满炸药，妄图炸死从此处经过去往大剧院首席执政官（the First Cousul）拿破仑。车队经过的时候爆炸发生了，几个路人当场炸死，然而拿破仑竟然奇迹般地逃过了，毫发无损。到了剧院，立马要求将凶手捉拿归案，以惩效尤。任务落到了新上任的首席检查长
+Roch（Chief Inspector）身上，后面的故事便通过他展开，通过重重排查、群众举报，最终将涉案凶手抓捕归案。</p>
+
+<p>说比做容易。一时间保皇派、雅各宾派人人自危，尤其是后者，连拿破仑都怀疑是他们策划的阴谋。敌意从来都有长远的记忆，于是曾经的一些雅各宾派、或者是出言不逊者，被迅速抓捕，其中甚至包括 Roch 的父亲，一个雅各宾派的同情者，还有一个艺术家朋友也稀里糊涂锒铛入狱。当然，他们都不是凶手，不过是恐怖政策的牺牲品而已。</p>
+
+<p>Roch 近来新结交的情人 Blanche，漂亮大方，可是她年纪轻轻便嫁给了长他二十的富翁，两人经常私下约会，吐诉衷肠。一次，她向他求一个礼物，婚戒。他有些诧异，不过还是决定买一个送她。他的一个文艺青年同事最近情场失意，说是由于他在警局工作的缘故，Roch 开玩笑说肯定是因为警局能查她的个人档案。一语成畿。那天买到戒指兴冲冲回到警局，鬼使神差，他没有回办公室，而是来到档案室。Blanche 的现任丈夫，极有可能是她的父亲！</p>
+
+<p>Roch 来到 Blanche 家里，质问她为何骗他。Blanche 哭着和盘托出。她年轻时候与人私定终身，情郎千里奔赴英格兰，要她待他回来明媒正娶。可情郎竟然一去不回，战场上死去了，而之前为他俩主持婚礼的牧师竟然是假的，已经潜逃！无人证明她的清白。她与情郎的信件被情郎的另一情人发现，流传开来。Blanche 声名扫地，没有人愿意提亲。这个时候 Blanche 的亲生父亲王百万出现，主动要求为她挽回声名，同时也让她光明正大的继承他的遗产。一没有宗教洗礼，二没有同房。名为夫妻，实为父女，竟然也瞒了起来。</p>
+
+<p>而 Roch 不能接受她的欺骗，放弃了她：</p>
+
+<blockquote><p>It breaks my heart to give you up,but no,I don&#8217;t want you anymore.</p></blockquote>
+
+
+<p>其实，Blanche 还是隐瞒了一些故事。她还有一个身份，是保皇派之间通递信件的邮差，绰号 “for the King”，开篇谋刺拿破仑的罪犯早就与她串同。这是一段悲伤的故事，只怪年轻时候 too yong too simple and always naive,不细说。简直是法国版李香君，身心俱投为陛下，犹骂无耻浪荡命！</p>
+
+<p>后来查案当中他审讯一个女孩，ruined by her uncle，他鼓励这个女孩好好活，比如他自己就不介意这些。此刻他想到的依然是 Blanche。</p>
+
+<p>结局呢， Roch 选择了他的青梅竹马。确实如他所愿：</p>
+
+<blockquote><p>A pleasant,honest girl,a girl I could trust.</p></blockquote>
+
+
+<p>不过 Blanche 应该是离开巴黎，离开这个是非地了。</p>
+
+<p>还是值得一看的小说。</p>
+
+<p><img src="http://tianyaqu.com/images/for-the-king-cover.jpg" title="book cover" ></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PCA and Its Applications]]></title>
+    <link href="http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications/"/>
+    <updated>2014-10-14T19:40:15+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications</id>
+    <content type="html"><![CDATA[<p>书接<a href="http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/">上回</a>,讲一下PCA。
+PCA（Principal Components Analysis）,主成分分析。它是人脸识别、图像压缩中一项重要的工具技巧，作用是在高维（多属性）数据集中找到隐含的模式，利用这些隐含的模式来代表原来的高维数据，从而达到数据简化的目的。首先明确一点，PCA的数据集是无标签的，也就是无所谓分类，属于无监督学习，这一点跟LDA还是有区别的。</p>
+
+<p>对于PCA的原理，有两种解释，也就有两个数学推导。一是找到一个线性投影，使投影后的维数下降，且数据差异最大（保留原数据的多样性）;二是保证投影损失最小，即原数据点与投影后的数据点距离平方和最小。下面，介绍下一。</p>
+
+<!--more-->
+
+
+
+
+<h4>1.简述</h4>
+
+
+<p>数据的多样性在统计上的对应便是方差。假定我们找到了投影向量$u_{1}$，简单起见，它还是一单位向量,也即$u_{1}u_{1}^T = 1$.</p>
+
+
+<p>那么投影前后的方差为</p>
+
+
+<p>$$\frac{1}{N}\sum_{n=1}^N\left\{u_{1}^Tx_n-u_{1}^T\bar{x}\right\}^2 = u_{1}^TSu_1$$</p>
+
+
+<br>
+
+
+<p>其中S为</p>
+
+<p>$$ S = \frac{1}{N}\sum_{n=1}^N(x_n - \bar{x})(x_n - \bar{x})^T $$</p>
+
+
+
+
+<p>在加上单位向量与其转置乘积为1的限定，考虑使用拉格朗日算子</p>
+
+
+<center>$$ U_{1}^TSu_1 + \lambda_1(1-u_{1}^Tu_1)$$</center>
+
+
+<p>对其求导，这样便成为一个线性代数上求特征根的问题：$Su_1 = \lambda_1(1-u_{1}^Tu_1)$ 。</p>
+
+
+<p>公式两边同时左乘以$u_{1}$,可以容易看出，$\lambda_1 = u_{1}^TSu_1$ 。</p>
+
+
+<p>所以当选择一个最大的特征值对应的是其最大的方差，此时对应的特征向量就被成为主成分。每个特征特征向量为D × 1的列向量。选定K（K&lt;=D）个较大特征值对应的特征向量U（D × K），作为投影向量。那么原数据经过投影后的数据便为 $X&#8217; = X × U$。</p>
+
+<p>总结一下，PCA的实施步骤为：</p>
+
+<pre><code>1.数据集减去平均值
+2.计算协方差矩阵
+3.求得协方差矩阵的特征值与特征向量
+4.对特征值从大到小排序，选定要使用的特征值与特征向量
+5.生成最终（降维后）数据
+</code></pre>
+
+<h4>2.高维情况</h4>
+
+
+<p>就这样了么？理论上是可行的。可是对协方差矩阵求特征解的时候，会有难度。因为大多数情况下，数据的维度远远比数据的数量大，即 N << D。特别对于图像处理而言，一个像素对应着一个维度，因此维度会特别大，协方差矩阵也会随之膨大(D×D)，导致计算量激增(协方差矩阵的计算复杂度为$O(D^{3})$。这里有个trick,将原数据转置，这样将数据的列转换数据的数目N，对其进行特征值求解，然后将特征向量转化为原矩阵的特征向量。Bishop 的《Pattern Recognition and Machine Learning》给出了证明。</p>
+
+给出一数据集X（已经减除平均值），其大小为（N × D，N << D）。协方差矩阵即为 $S = N^{-1}X^{T}X$,根据上面求PCA的步骤，计算协方差矩阵的特征值，便有：
+$$N^{-1}X^{T}Xu_{i} = {\lambda}_{i}u_i$$
+稍微作下变形。两边同时左乘$X$,则有
+$$N^{-1}XX^T(Xu_{i}) = \lambda_{i}(Xu_{i})$$
+注意到，$XX^T$是矩阵$X^T$协方差的表达。这是原数据的转置的协方差矩，大小N × N。对其分解，得到特征向量$v_i = Xu_i$
+同时，对上式两边再次左乘$X^T$,有
+$$(N^{-1}X^TX)(X^Tv_i) = \lambda_{i}(X^Tv_i)$$
+这不正是原始数据的分解矩阵么？！，可以看出 $X^Tv_i$ 正是其特征向量，它由原数据的转置$X^T$线性变换而来！
+$$u_i = \frac{1}{(N\lambda_{i})^{1/2}}X^Tv_i$$
+<p>即利用转置后的特征向量$v_i$,进行某种线性变换，获得的结果与本身的特征向量相同。可是，却在特征分解的时候减少了计算量。</p>
+
+<h4>3.人脸识别</h4>
+  
+<p>2中的知识其实已经说的很明白了，它解决了高维情况下矩阵分解问题，处理图像起来也就得心应手，一个简单的人脸鉴别便可做了。
+步骤大致如下：</p>
+
+<p>1.准备一个人脸不同照片，图片的大小务必一致。可以从网上的人脸库中提取一些;  
+<p>2.加载训练图片，获得原始数据X(N × D)。根据2中步骤，获得K个投影向量$u_i$; 
+<p>3.加载新图片，计算投影后向量X&#8217;(1 × K); 
+<p>4.计算与训练图片的投影距离，平均距离在阈值内则认为是该类。
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Legolas 究竟能看多远？]]></title>
+    <link href="http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see/"/>
+    <updated>2014-10-01T04:54:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/10/01/how-far-can-Legolas-see</id>
+    <content type="html"><![CDATA[<p>指环王的设定中，精灵族被描述为英俊潇洒、武功高强、视力敏锐的类人类（human-like）形象。别的不说，但就视力敏锐这一项，就让人望不可及。在护戒小分队中，精灵王子 Legolas 扮演侦察员的角色，经常留意远处突然出现的危险。“the Riders of Rohan”一章中，Legolas 在 5 leagues（约24km。 1 leaue等于3mile,1 mile 约1.6km）开外就发现了 Rohan 的骑兵队伍，不仅看清他们的发色、装备、人数，还从中认出了对方的指挥官。多么了不起的眼力！ Legolas 真能看那么远么？</p>
+
+<!--more-->
+
+
+<p>这里就要引入一个概念：艾里斑（Airy disk）。学术来讲，就是光束通过一个圆形孔径的镜头所能得到的最好光点的描述。因为光作为一种电磁波，在通过狭缝时候会发生衍射，这样会得到一个明亮的中心与外部明暗交替的圆环。这个中心就被称为艾里斑（airy disk），它与周边的圆环一道被叫做艾里图（airy pattern）。他们都得名于George Biddell Airy，因为他对这一现象做了理论解释。</p>
+
+<p>艾里斑可以看作是对原目标点的模糊，因为光线的衍射会丧失一部分细节。如果有两个点距离很近，他们通过透镜后的艾里斑的边缘圆环重合的时候，就无法区分这两个点。这样，我们就会说看不清目标了。那么人眼睛视力的极限是多少呢？</p>
+
+<p>如上，艾里斑的大小确定了透镜的分辨率，当然数值越小的艾里斑代表着更好的分辨率。它由这个公式确定</p>
+
+<pre><code>sin(θ) ≈ 1.22×（λ/d）
+</code></pre>
+
+<p>λ代表波长，d代表孔径直径。在θ极小的时候，sin(θ)∽θ，所以上式也可简化为</p>
+
+<pre><code>θ ≈ 1.22×（λ/d）
+</code></pre>
+
+<p>由上可知，透镜分辨率由波长与孔径大小决定。为了获得更好（小）的分辨率，可以通过减少波长（换光）与增大孔径（大镜头）来达成。在θ小的情况下，还有一个更简易的公式</p>
+
+<pre><code>θ ≈ x/f = h/D = 1.22×（λ/d）
+</code></pre>
+
+<p>x代表物体在视网膜（幕布）的投影大小，f为眼睛焦距,h为物体高度，D为物距。对于人眼睛来讲，瞳孔大小5毫米，光线波长500纳米，很容易算出角度为</p>
+
+<pre><code>θ ≈ 1.22×（λ/d）× 180/π ≈ 0.007°
+h = θ×D = 1.22×（λ/d）× 100 = 1.22×10^-2(m) //设距离100米
+</code></pre>
+
+<p>这个是人眼睛分辨的极限了，相当于在100m处看一1厘米的物体，要知道到这个程度人眼睛看到的物体在视网膜上的投影就会被模糊掉了。</p>
+
+<p>当 Legolas 在24千米外观察骑兵时候，其能分辨的极限可从上面公式得处为2.96米，也即3米高的物体在Legolas看来就已经开始模糊不清了，或许他能从模糊中数出骑兵数目，可要看清每人装束就不可能了。除非————</p>
+
+<h2>what if</h2>
+
+<p>上面的公式告诉我们，要想让θ小。可以通过减小λ,增大d,增大f来实现。</p>
+
+<p>如果Legolas能够看到波长更短的光线，比如紫外线。如果他能看到波长200纳米的紫外线，那么在24千米外他能够刚刚分清</p>
+
+<pre><code>h = 1.22×（200×10^-9/(5×10^-3)）×24000 = 1.2米
+</code></pre>
+
+<p>这样大小的物体，区分人物已经够了。可是，要知道空气会吸收紫外线，紫外线在大气中并不能有效传播，意味着Legolas很可能生活在一片黑暗当中！</p>
+
+<p>Legolas眼睛构造与人不同，比如说，焦距长，好比一个望远镜。这样对于Legolas简直就是灾难，因为长焦的镜头一般来讲视场小，对于抖动很敏感。玩过望远镜的同学就能感觉到，人裸眼看到的一片星空，通过望远镜只能看到皮毛大的一块，通过望远镜来巡视一片星空是很费时费力的。这对善于狩猎的精灵族人来讲，要有进化出强健的结构来支撑脖子（防抖），同时还能快速扫描目标区域。那么精灵族人的头部可能是这样的：</p>
+
+<p><img src="http://tianyaqu.com/images/Chicken-Powered-Image-Stabilization.jpg" alt="Chicken Powered Camera Stabilization" /></p>
+
+<p>或者，Legolas的瞳孔异于常人。比如这样子：</p>
+
+<p><img src="http://tianyaqu.com/images/gollum.jpg" alt="gollum" /></p>
+
+<p>当然，还可以靠魔法嘛。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[c++ template explicit instantiation]]></title>
+    <link href="http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
+    <updated>2014-09-11T01:54:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
+    <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
+当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。</p>
+
+<!--more-->
+
+
+<p>这个问题的原因在于，template具现化（instantiated）的时机是在编译期，而编译期间不同文件的细节是彼此不知道的，除非include过去（include就把两个文件合并了，仍然是同一个文件）。template可以理解为一个“模式”，其声明部分说明①“模式是什么”，实现部分说明②&#8221;怎么做&#8221;,而调用部分说明③“哪一个模式”，只有编译器同时知道了两者，才能正确的具现化。
+template具现化的时机是找到被调用的地方，这样找到了③，通过头文件顺藤摸瓜获得了①,如果②与①不再一个文件,那么&#8221;编译期间不能跨文件&#8221;的魔力就发挥出来了,导致具现化失败。
+那么有办法做到分离么？肯定有。下面介绍三种方法。</p>
+
+<h2>1. 通过include引用</h2>
+
+<p>本质上是把声明与实现放到同一个文件。foo.h是声明部分，foo.cpp是实现部分，main.cpp是调用部分，在foo.h末尾include &#8220;foo.cpp&#8221;,main.cpp使用时候include &#8220;foo.h&#8221;即可。include关键字的作用是在将当前行替换为include文件的内容。这也就避免了编译时期跨文件的问题。这种方法被称为置入式模型（inclusion model）。</p>
+
+<h2>2. explicit instantiation</h2>
+
+<p>这个是本文主要提到的内容。除了置入式模型之外，c++提供另外一种方式，称之为“显式具现化”（explicit instantiation）。它要求用户主动明确地书写出模版的适用类型，</p>
+
+<pre><code>template Class&lt;int&gt;;
+</code></pre>
+
+<p>这样代码的结构变成了:foo.h声明，foodef.h实现部分，foo_inst.cpp显式具现化，然后由main.cpp调用。</p>
+
+<pre><code>//foo.h
+template &lt;typename T&gt;
+class Interface
+{
+public:
+    Interface(T const&amp;);
+    void show(T);
+private:
+    T data;
+};
+
+//foodef.h
+#include "foo.h"
+#include &lt;iostream&gt;
+template &lt;typename T&gt;
+Interface&lt;T&gt;::Interface(T const&amp;t)
+{
+    data = t;
+}
+
+template&lt;typename T&gt;
+void Interface&lt;T&gt;::show(T x)
+{
+    std::cout&lt;&lt;x&lt;&lt;std::endl;
+    std::cout&lt;&lt;data&lt;&lt;std::endl;
+}
+
+
+//foo_inst.cpp
+#include "foodef.h"
+
+template class Interface&lt;int&gt;;
+template class Interface&lt;float&gt;;
+
+//main.cpp
+#include "foo.h"
+Interface&lt;float&gt; fl(2.4);
+fl.show(4.5);
+Interface&lt;int&gt; fi(5);
+fi.show(2);
+</code></pre>
+
+<p>这种方法甚至可以将模版的实现作成lib被外部使用，将foo_inst.cpp作成lib。</p>
+
+<pre><code>g++ -c foo_inst.cpp -o foo_inst.o
+ar rcs libfoo.a foo_inst.o
+</code></pre>
+
+<p>在项目中链接该库即可。(有人说这样的话，要把foo.h中使用extern将显式的template声明出来，我这里编译器gcc 4.6.3，没有使用extern关键字不提示错误或者警告。原因不明，有知道原因的请告诉我）。</p>
+
+<h2><del>3. export关键字</del></h2>
+
+<p>该方法的使用比较简单，需要在在申明与实现的部分在template前加上export关键字，好假啊，为什么不早点告诉我？
+编译器支持太有限了！如《c++ template》中讲到，02年时候只有一家公司(Edison Design Group,Inc)实现了export，gcc,vs,clang都不支持。用户使用起来简单了，而内部实现却复杂了。比如</p>
+
+<pre><code>template Class&lt;int&gt;
+</code></pre>
+
+<p>变为</p>
+
+<pre><code>template Class&lt;float&gt;
+</code></pre>
+
+<p>所有依赖的代码都要重新编译。而常用的项目组织工具如make,会根据文件修改时间以及文件依赖次序来决定是否重新编译，在这种情况下(template代码没变)可能不按照大家的意图来重新编译。只有靠编译器来一一记住这些依赖关系来决定编译与否，这也不会有太多编译时间上的优势。
+还有一个现实是，在c++0x标准中，export被列为过时（obsolete）的！而推用extern了。坑爹那！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[分离一个核模板]]></title>
+    <link href="http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/"/>
+    <updated>2014-04-10T20:54:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter</id>
+    <content type="html"><![CDATA[<p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
+
+<script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
+
+
+<p>这样，如果能将滤波器（二维）转化成两个一维的乘积形式，计算量就降低到<script type="math/tex">2 \times M \times N</script>，这样会大大简化计算量，尤其是是当图像比较大的时候，计算量的优势就越明显。<a href="http://blog.csdn.net/zddblog/article/details/7450033">这篇文章</a>给出了不同高斯实现的性能比较。
+最典型的应用当属二维高斯滤波了，二维高斯核刚好等同于两个一维高斯的乘积，二维高斯核函数可以用一维的高斯核分别在x轴和y作卷积来代替。</p>
+
+<!--more-->
+
+
+<pre><code>% kernel width  6*sigma (-3sigma,3sigma) should be ok
+cutoff = ceil(3*sigma);  
+% 1D gauss kernel.width puls one to make it symentric
+h = fspecial('gaussian',[1,2*cutoff+1],sigma);  
+out = conv2(h,h,I,'same');
+</code></pre>
+
+<p>OK，高斯这个是情况特殊（恩，高斯可是跟上帝掷色子的人）。现在我们有任意一个核函数模板，怎么去分解这个矩阵呢？
+这里有两种方法，先说一下简单的方法。它的思路是利用可分离核函数的对称性，任意取出一列Cn，作为分解列向量h1，取对应行Rn，同时为了保证归整，h2 = Rn/K(n,n)作为行向量。不过，可能会遇到除0的情况，所以更普遍意义上是这么实现的：</p>
+
+<pre><code>% Pick the column with largest values
+[~,I] = max(sum(abs(h))); 
+h1 = h(:,I);
+% Pick the row with largest values
+[~,I] = max(sum(abs(h),2)); 
+h2 = h(I,:)/h1(I);
+</code></pre>
+
+<p>第二种类方法，充分利用了svd的强大计算能力。svd可以将一个矩阵（核模板只是一个方阵）分解成两个正交矩（这两个矩不正交）夹乘一个对角阵，</p>
+
+<script type="math/tex">A=US{ V }^{ T } </script>
+
+
+<p>那么，很容易得到 AV = US，又由于V是一个正交矩阵，取任一列作<script type="math/tex">V_i</script>,有</p>
+
+<script type="math/tex">A{V_i}{V_i}^{T}=AE=A </script>
+
+
+
+
+<p>如此，便得到 <script type="math/tex">AV_i</script>与 $V_{i}^T$ 为卷积核的两个一维分量。</p>
+
+
+<pre><code>[u,s,v] = svd(h);
+s = diag(s);
+if sum(s &gt; eps('single'))==1
+    h1 = u(:,1)*s(1);
+    h2 = v(:,1)';
+else
+    error('Kernel not separable!')
+end
+</code></pre>
+
+<p>注：文中的代码来源于 <a href="http://www.cb.uu.se/~cris/blog/index.php/archives/288">Cris&#8217;s Image Analysis Blog</a>
+ps:
+怎样才能确认该核模板为可分离（seperable）呢？答：秩为1;
+这方法是不是降维啊？肯定是。挖个坑，以后补上PCA。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello,Uncle?]]></title>
+    <link href="http://tianyaqu.com/blog/2014/02/28/hello-uncle/"/>
+    <updated>2014-02-28T21:16:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/02/28/hello-uncle</id>
+    <content type="html"><![CDATA[<p>哥哥弟弟brother,姑姑舅妈叫aunt，姑父舅舅叫uncle，姑姑的儿子叫cousin，那爸爸的cousin叫什么呢？恩，uncle?</p>
+
+<p>人常说英语描述亲属关系不准却，“堂”“表”“长”“幼”“男”“女”不分，上下尊卑无别，这是要亡国的节奏。书里面冒出来路人甲叫你uncle，恨的人咬牙切齿，这是侄子还是外甥？英语世界对亲属关系的描述是基于“代”的，不分“父支”“母支“，也就是说堂兄是你的cousin，表兄也是cousin。另外，堂兄也有很多，在中华的语境里，父亲的兄弟的儿子叫堂兄，父亲堂兄的儿子也叫堂兄。按照歪国人”不知里表“的传统，也都叫cousin吧。</p>
+
+<!--more-->
+
+
+<p>不巧的是，这次写书的倒像是国产埋首故纸堆的老学究，舞文弄字食古不化，甩出来个 second cousin,once removed一下子傻眼了。曾被逐出家门（又归家）的二表姐？两家断亲（又续亲）的二表姐？出嫁的二表姐？</p>
+
+<p>严格意义来说（照歪国人来说就是technically speaking，这也算科技？），cousin是一人的第三世后代之间的称谓（这人为第一世），也叫first cousin，这也就把（亲）姑、舅、姨、叔、伯的儿女囊括其中，依次推算，这人的第四世后代之间，便是second cousin。</p>
+
+<p>而once removed则表示”代差“，你父亲的first cousin，也就是国产的表叔/姑，对你而言就是first cousin once removed，因为你们之间有一代辈份的差距。有意思的是，这个称谓是相互的。你叫他first cousin once removed；同理他也如此叫你。不过事无绝对，也有叫表叔second uncle的，这就另当别论了。</p>
+
+<p>有关系表一张：</p>
+
+<center><img src="http://tianyaqu.com/images/kinship.png"></center>
+
+
+
+
+<p>使用方法：</p>
+
+
+<p>选取两人最近的公共祖先，将两人分别置于行与列上，根据他们与公共祖先的关系(child?grandchild?.etc)，选择行号与列号， 行与列确定的区域即是两人的关系。</p>
+
+
+<p>比如一家族树如下所示，</p>
+
+<center><img src="http://tianyaqu.com/images/familytree.png"></center>
+
+
+<center>source:wikepedia</center>
+
+
+
+
+<p>David与Emma, 他们最近的公共祖先为Agatha，David用行代表，Emma为列，他们都距离Agatha二代，即行号、列号落在Grandchild上， 得出两人是first cousin。David与Gloria，坐标为Grandchild与G-grandchild，便是first cousin once removed，同理Frank与Gloria就是Second cousin了。 </p>
+
+
+<p>至于“堂”“表”的称谓，一般是不写出那么清晰的，像P&amp;P中出现的两对aunt，只能根据姓氏、上下文对话来推断是姨不是姑。如果想要描述具体，可以说是 paternal aunt/uncle或者maternal aunt/uncle,也又说aunt/uncle of matrilinear/female line，这就不拘一格了。</p>
+
+<p>表姐/弟 的说法就是用cousin sister,cousin brother 区分男女， 前面加elder/yonger来表长幼。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Listen to the air]]></title>
+    <link href="http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/"/>
+    <updated>2014-01-11T01:59:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air</id>
+    <content type="html"><![CDATA[<p>sherlock深吸一口气双目深凝耳朵瞪大嘴角含笑身形飘逸才思敏捷之后：Watson,Moriaty gets me another case!啊?发生什么事情了么？神探的技能升级了！不仅能感受周围人思考时的annoying noise，而且能截获电波！再也不用担心手机没电，漏掉whip queen的求救短信了。</p>
+
+
+<p>这当然是个笑话。可是，怎么才能具有这种特殊本领呢？首先，你得具有计算能力，其次计算能力还得十分高效（否则你就提前一周交代好家人做好墓碑原地埋葬），再次还需要IT人士打造一款[贴心]安装的app。什么样的app?</p>
+
+<!--more-->
+
+
+<p>我们在听广播节目的时候，需要指定一个频率，比如102.1MHZ，然后才能收听。可是这个跟好男人曾老师在演播室的声音有什么关系呢？声音本质上是一个正弦波，人类发声的是一个频率比较低的正弦波。平时对话的时候，我们直接将这个波发送到空气中，传到对方的耳朵里，但是距离很有限，通信基本靠吼也就只能在村里才有用武之地。</p>
+
+<p>可是高频信号却有一些十分有利的特性：其一传送距离远而且需要能量小；其二是它的宽度比较大，可以多个信号复用同一个信道。102.1MHZ就是一个高频的信号，电台选用它希望可以把曾老师富有魅力的声音附带上去，从而得到一个高频信号，他的中心频率刚好是102.1MHZ。</p>
+
+<p>数学家们是这么做出来的：学名叫调制。</p>
+
+<p><img src="http://tianyaqu.com/images/psb.png" alt="调制" /></p>
+
+<p>y 表示调制后的信号，x为原始信号，fc为载波频率</p>
+
+<p>注意到，y的相位与源信号是有紧密关系的（看不出来？相位先微分再作除法就是x）。所以有人说调频的信息是由波的频率附带的，它对幅度方向的噪音不敏感。</p>
+
+<p>然后把y放到电台的传送设备上OK.现在在大街上都能收到这电波了，嗯，空气中好像弥漫着电波的味道。曾老师松了一口气，终于没事了。可是他还很忧虑：似乎还有隔壁那个山寨电台你的月亮我的心的101.2MHZ的味道&#8230;风声雨声读书声，当然还有菜市场的叫卖声，手机电话的电波。。。这该怎么区分呢？傅立叶从罗密欧怀里走出来：这就是我存在的意义。。。</p>
+
+<p>傅立叶变换人称为信号界的显微镜，不是白吹牛的。不用傅立叶变换，我们还是回忆高等数学的傅立叶基数。</p>
+
+<p><img src="http://tianyaqu.com/images/fourier.png" alt="傅里叶基数" /></p>
+
+<p>公式指数部分代表着频率。傅立叶基数的普遍意义是将一个信号分解出不同频率（k）的分量。   好了，经过傅立叶这个照妖镜，得到来自关心频道的信息，曾老师你可以放心松口气了。现在得到的是经过载波之后的信号，需要进一步把载波去掉，才能最终得到演播室的原始声音，这就是所谓的解调。跟电台的操作刚好相反。前面说道，信号的相位与源信号紧密相关，那么获取了相位信息，也就能还原出源信号。我不告诉你这种方法叫Quarature detectator。于是我讲一下另一
+种方法。</p>
+
+<p>上公式</p>
+
+<p><img src="http://tianyaqu.com/images/demodulation.png" alt="解调" /></p>
+
+<p>依然是求导。不过这个方法却不需要计算相位。微分之后，却把相位信息放到了正弦函数的系数上了。由于系数携带着被调频的信息，所以歪国人称之为envelope，我国称之为包络。这个包络可以用硬件，也可用软件实现。Ac,fc,fdelt 是常值，据此很容易推出x。</p>
+
+<p>Q.E.D.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://tianyaqu.com/blog/2013/09/08/hello-world/"/>
+    <updated>2013-09-08T04:48:04+08:00</updated>
+    <id>http://tianyaqu.com/blog/2013/09/08/hello-world</id>
+    <content type="html"><![CDATA[<p>Welcome to <a href="http://zespia.tw/hexo">Hexo</a>! This is your very first post. Check <a href="http://zespia.tw/hexo/docs">documentation</a> to learn how to use.</p>
+]]></content>
+  </entry>
+  
+>>>>>>> xyz/master
 </feed>

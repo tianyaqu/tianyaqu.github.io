@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>玩一把HMM的掌纹识别 - When Winter Fell</title>
+  <meta name="author" content="tianyaqu">
+
+  
+  <meta name="description" content="">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="When Winter Fell" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	// hide #back-top first
+	$("#back-top").hide();
+	
+	// fade in #back-top
+	$(function () {
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {
+				$('#back-top').fadeIn();
+			} else {
+				$('#back-top').fadeOut();
+			}
+		});
+
+		// scroll body to 0px on click
+		$('#back-top a').click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 800);
+			return false;
+		});
+	});
+
+});
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?947b1b0038a253fb50732e178e5ec319";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">When Winter Fell</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/search" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:tianyaqu.com" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">玩一把HMM的掌纹识别</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-05-15T22:13:00+08:00" pubdate data-updated="true">May 15<span>th</span>, 2015</time>
+        
+        
+          | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。</p>
+
+<p>看到这个题目的人，如果对马尔科夫模型有所了解的话，一定会很奇怪，马尔科夫模型建立的两个关键要素是观测序列与状态转移，这怎么体现在掌纹上呢？</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>说起来，这个理论最早是从人脸识别上搬运过来的。将人脸图像从上到下分成若干个子块，这些子块自上而下依次组成观测序列，每个子块所蕴涵的信息被当作状态。这个状态可以这么理解，它是由人脸的生物特征，比如相互位置、颜色、形状等在统计意义上的抽象。也即是，认为“状态”蕴含了人脸的生物特征，但是具体蕴含哪些？有多大关联却并不作直接解释(如果你知道合理的解释，请务必指导我)。</p>
+
+<p>如此，对人脸图像进行切分，得到一系列的子块，作为观测序列。我们知道，马尔科夫模型有这么几个应用场景。</p>
+
+<pre><code>1.根据模型参数与观测序列，求观测序列出现的概率
+2.已知观测序，估计模型参数
+3.根据模型和观测序，求最可能的状态序列
+</code></pre>
+
+<p>首先，我们面临的是第二种问题。我们认为用马尔科夫模型可以描述切片序列的变化规律，根据这些切片序列推断模型参数，这是参数估计问题，也是个无监督学习过程，经常用Baum-Welch算法训练得到参数。</p>
+
+<p>然后是关键的一步。当新来的人脸图片时候，首先对其切片获得观测序列，利用第一步中获取的模型参数，计算其可能的状态及其似然值，作为分类的依据。这对应上述第三种问题，可以用维特比算法求解。</p>
+
+<h2>训练</h2>
+
+<p>掌纹识别即与人脸的识别方法完全相同，不过还有一些细节需要阐述下。由于马尔科夫模型的观测变量与状态变量是离散的，所以要找到一种方法将连续的“切片”离散化。</p>
+
+<p>矩阵的奇异值向量具有稳定性、位移不变、旋转不变等优良特性，可以用来很好的描述矩阵，所以选取它作为“切片”数据的特征。进一步，将这些特征使用k-means聚类，聚类的标号作为该切片的“状态”。用户需要自己决定状态数目，以及观测概率的分布数量。不过据一篇来自清华的论文&#8221;DSW Feature Based Hidden Marcov Model: An Application on Object Identification&#8221;的实验结果，状态在6-7时候效果较佳。</p>
+
+<h2>识别</h2>
+
+<p>按照训练一节，对每一个人训练出一套模型参数。对于新来的待识别图像，切片、奇异值分解、状态分类。分类使用欧几里德距离方式确定，根据它与不同分类的中心距离，取最近的作为类标号。这样便获得一个基于类标号的观测序列，将它代入各个用户模型分别计算其最大似然值(场景三)，取其最大似然值作为识别的结果。</p>
+
+<h2>实现</h2>
+
+<p>见我的 github repo <a href="https://github.com/tianyaqu/palm-identification-with-hmm">palm-identification-with-hmm</a></p>
+
+<h2>结果与改进</h2>
+
+<p>使用PolyU的<a href="http://www4.comp.polyu.edu.hk/~biometrics/">Palmprint Database</a>进行实验，为标准化的128*128图，省去了预处理过程。</p>
+
+<p>据实验结果，在4人的识别中，效果可以达到60-70%，人数再多效果就很快急剧下降，不忍直视。
+可从如下两个方面着手：</p>
+
+<p>1.模型训练时候的初始观测概率分布使用了随机值，导致结果会有跳动。可以考虑在不同初始值情况下，通过多次迭代找出最优的模型参数，后续不再训练。</p>
+
+<p>2.模型的可解释性。由于模型中的状态并没有直接对应的物理意义，颇有点类似神经网络的神经元个数的意味。进一步提高识别率需要与其他方法结合。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://tianyaqu.com">tianyaqu</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://tianyaqu.com">tianyaqu</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-05-15T22:13:00+08:00" pubdate data-updated="true">May 15<span>th</span>, 2015</time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/machine-learning/'>Machine Learning</a>, <a class='category' href='/blog/categories/信号与图像/'>信号与图像</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hmm/'>hmm</a>, <a class='tag' href='/blog/tags/matlab/'>matlab</a>, <a class='tag' href='/blog/tags/palmprint-identification/'>palmprint identification</a></span>
+		
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2015/05/14/matlab-stuff/" title="Previous Post:
+        matlab 闲话">&laquo; matlab 闲话</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2015/05/17/monte-carlo-simulation/"
+        title="Next Post: Monte Carlo模拟">Monte Carlo模拟
+        &raquo;</a></li>
+      
+    </ul>
+    
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="玩一把HMM的掌纹识别"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tianyaqu"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END -->
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><p id = "back-top">
+	<a href="#top"><span></span>Back to Top</a>
+</p>
+<hr>
+<p>
+  Copyright &copy; 2009 - 2015 - <a href="http://tianyaqu.com">tianyaqu</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> </span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: c++ | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/categories/c-/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2015-08-01T23:31:21+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[from c10k to coroutine]]></title>
+    <link href="http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine/"/>
+    <updated>2015-02-24T15:36:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/02/24/from-c10k-to-coroutine</id>
+    <content type="html"><![CDATA[<p><a href="http://www.kegel.com/c10k.html">c10k</a>问题：当网络的用户访问量达到一定级别后(一万的并发量)，经典的编程模型便不能满足数以万计的连接请求。最近在看陈硕的多线程编程书，阅读muduo代码，真如醍醐灌顶。一方面解释了自己一直模糊的概念（异步），同时也开了眼界（多线程、Eventloop），这都是平常书上难读到（业界却常用）的‘常识’。另加上自己最近事情的一些体会，记下来当作读书笔记吧。</p>
+
+<!--more-->
+
+
+<p>先理一下常见模型。从最常见的网络编程教程的玩具程序开始讲起。服务端绑定、监听后，客户端连接过来，Alice与Bob就开始光天化日的眉来眼去。这只能是玩具，因为只能同时服务一个用户，在当前客户端断开前，其他客户的请求是看不到的。</p>
+
+<p>然后就有了fork-per-client（正是linux环境编程里举的例子），以及它的变形thread-per-client。即起一个进程或者线程处理请求，这两种是换汤不换药的做法。进程和线程都是需要消耗系统资源的，拿线程来讲，一个线程默认栈空间是10m,在32位系统上只能起300左右线程。离10k相差甚远。</p>
+
+<p>然后使用select/poll，epoll这一套先进生产力工具。select/poll同时服务的客户端增大了，但仍然不够。epoll每次得到活跃fd即可。根据fd号，将请求分发到accept或者handler上，这就是鼎鼎大名的Reactor模式。已经能出色应付得了多数网站需求了。可是，对于耗费cpu的操作，其他客户的请求也不能满足了，所以引入了多线程，多招几个能干活的伙计，把干活的与接客的分开。</p>
+
+<p>线程池就是这些伙计们，用Eventloop把干活的与接客的分开，如果活重，辛好还有别的伙计能顶替，同时每个伙计可也做好几件事情(Eventloop)，但不会把接客的任务给耽误了。这个就是陈硕最终提倡的模型：Reactor + Threadpool + one Eventloop per Thread.陈硕的书讲了很多，除开一些经验之谈（怎么做才较好，智能指针实现RAII手法读来让人心旷神怡），Eventloop与Threadpool当是核心了。</p>
+
+<p>多线程一出现，考虑问题脑子就要多转个弯。不得不注意异步，事件的顺序也不能想当然了。前段时间刚好给我埋了个小坑。要作的事情很简单，是在app启动时候，往redis写点关键数据进去。由于网络环境问题，有时候没写成功，所以要加入重试功能，失败了最多再试三次。用的client刚好是个异步接口实现，这下懵了，结果是什么、什么时候出来不知道，sleep原地等待肯定是行不通的。client的callback倒是可以看到结果，可是执行都是在其他线程的，通知本进程只能用ipc了，有点杀鸡用牛刀的嫌疑，并且为了等结果本进程还是得阻塞才行。</p>
+
+<p>后来问了神牛，说这种用coroutine实现最好了，这当然是不可能的（先天无力）。最后只能用笨方法，callback里面继续使用client查询,为了存储尝试次数，不得不裹了一层。</p>
+
+<pre><code>callback(context* r,void* para)
+{
+    if(r-&gt;result != "ok")
+    {
+        if(para-&gt;time-- &gt; 0)
+        {
+            asyncClient client
+            client.query(callback,para)
+        }
+    }
+}
+
+app()
+{
+    Para para
+    para.time = 3
+    asyncClient client
+    client.query(callback,&amp;para)
+    do_other_stuff()
+}
+</code></pre>
+
+<p>coroutine在tornado里面见过，作为一个装饰器出现。从作用上来看，是把异步调用同步化，把单线程当多线程用，处理上面的问题刚好是顺心趁手的，可惜没有巨人焉能成为牛顿。在python中有yield这种语言级支持，可也轻松实现，在c/c++中，看到两种实现。一种是基于上下文切换的，使用Setcontext族函数保存上下文跳转，比如<a href="https://github.com/cloudwu/coroutine">云风的实现</a>。当然还有一种逆天的实现，使用类似goto语句的跳转(比如<a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html">这里</a>)，例如包裹switch case的宏，著名的实现是 boost::asio::coroutine。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[c++ template explicit instantiation]]></title>
+    <link href="http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation/"/>
+    <updated>2014-09-11T01:54:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/09/11/c-plus-plus-template-explicit-instantiation</id>
+    <content type="html"><![CDATA[<p>在组织c/c++工程的代码时候，有一个重要原则便是“接口与实现的分离”，这样对于调用者屏蔽了实现细节，只曝露最小的外部功能使用接口，调用者只关注自己的业务逻辑，由实现者保证功能实现的有效性。对于已经发布的产品，一些功能升级也只需要替换掉某些相关库而已，也有利于保护核心代码。同时头文件的代码也好看许多，好处种种不一。
+当c++模版要达到这个效果，就比较悲剧了。扫一眼书本案例，照着以往的经验兴冲冲开始一阵噼里啪啦，编译出来的结果确是“undefined reference”，令人打消继续学习的念头。</p>
+
+<!--more-->
+
+
+<p>这个问题的原因在于，template具现化（instantiated）的时机是在编译期，而编译期间不同文件的细节是彼此不知道的，除非include过去（include就把两个文件合并了，仍然是同一个文件）。template可以理解为一个“模式”，其声明部分说明①“模式是什么”，实现部分说明②"怎么做",而调用部分说明③“哪一个模式”，只有编译器同时知道了两者，才能正确的具现化。
+template具现化的时机是找到被调用的地方，这样找到了③，通过头文件顺藤摸瓜获得了①,如果②与①不再一个文件,那么"编译期间不能跨文件"的魔力就发挥出来了,导致具现化失败。
+那么有办法做到分离么？肯定有。下面介绍三种方法。</p>
+
+<h2>1. 通过include引用</h2>
+
+<p>本质上是把声明与实现放到同一个文件。foo.h是声明部分，foo.cpp是实现部分，main.cpp是调用部分，在foo.h末尾include "foo.cpp",main.cpp使用时候include "foo.h"即可。include关键字的作用是在将当前行替换为include文件的内容。这也就避免了编译时期跨文件的问题。这种方法被称为置入式模型（inclusion model）。</p>
+
+<h2>2. explicit instantiation</h2>
+
+<p>这个是本文主要提到的内容。除了置入式模型之外，c++提供另外一种方式，称之为“显式具现化”（explicit instantiation）。它要求用户主动明确地书写出模版的适用类型，</p>
+
+<pre><code>template Class&lt;int&gt;;
+</code></pre>
+
+<p>这样代码的结构变成了:foo.h声明，foodef.h实现部分，foo_inst.cpp显式具现化，然后由main.cpp调用。</p>
+
+<pre><code>//foo.h
+template &lt;typename T&gt;
+class Interface
+{
+public:
+    Interface(T const&amp;);
+    void show(T);
+private:
+    T data;
+};
+
+//foodef.h
+#include "foo.h"
+#include &lt;iostream&gt;
+template &lt;typename T&gt;
+Interface&lt;T&gt;::Interface(T const&amp;t)
+{
+    data = t;
+}
+
+template&lt;typename T&gt;
+void Interface&lt;T&gt;::show(T x)
+{
+    std::cout&lt;&lt;x&lt;&lt;std::endl;
+    std::cout&lt;&lt;data&lt;&lt;std::endl;
+}
+
+
+//foo_inst.cpp
+#include "foodef.h"
+
+template class Interface&lt;int&gt;;
+template class Interface&lt;float&gt;;
+
+//main.cpp
+#include "foo.h"
+Interface&lt;float&gt; fl(2.4);
+fl.show(4.5);
+Interface&lt;int&gt; fi(5);
+fi.show(2);
+</code></pre>
+
+<p>这种方法甚至可以将模版的实现作成lib被外部使用，将foo_inst.cpp作成lib。</p>
+
+<pre><code>g++ -c foo_inst.cpp -o foo_inst.o
+ar rcs libfoo.a foo_inst.o
+</code></pre>
+
+<p>在项目中链接该库即可。(有人说这样的话，要把foo.h中使用extern将显式的template声明出来，我这里编译器gcc 4.6.3，没有使用extern关键字不提示错误或者警告。原因不明，有知道原因的请告诉我）。</p>
+
+<h2><del>3. export关键字</del></h2>
+
+<p>该方法的使用比较简单，需要在在申明与实现的部分在template前加上export关键字，好假啊，为什么不早点告诉我？
+编译器支持太有限了！如《c++ template》中讲到，02年时候只有一家公司(Edison Design Group,Inc)实现了export，gcc,vs,clang都不支持。用户使用起来简单了，而内部实现却复杂了。比如</p>
+
+<pre><code>template Class&lt;int&gt;
+</code></pre>
+
+<p>变为</p>
+
+<pre><code>template Class&lt;float&gt;
+</code></pre>
+
+<p>所有依赖的代码都要重新编译。而常用的项目组织工具如make,会根据文件修改时间以及文件依赖次序来决定是否重新编译，在这种情况下(template代码没变)可能不按照大家的意图来重新编译。只有靠编译器来一一记住这些依赖关系来决定编译与否，这也不会有太多编译时间上的优势。
+还有一个现实是，在c++0x标准中，export被列为过时（obsolete）的！而推用extern了。坑爹那！</p>
+]]></content>
+  </entry>
+  
+</feed>

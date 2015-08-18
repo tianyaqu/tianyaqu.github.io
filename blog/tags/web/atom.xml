@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: web | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/tags/web/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2015-08-01T23:31:21+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[模仿一个问答网站]]></title>
+    <link href="http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website/"/>
+    <updated>2015-06-26T22:10:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website</id>
+    <content type="html"><![CDATA[<p>为了适应互联网发展的浪潮，捣鼓出一个问答网站出来。集成问答、timeline、好友、话题、问题关注，以及简陋的热门功能。
+采用tornado + mongodb实现，timeline使用push的方式，其中一些数据比如timeline没有使用redis存储，每次都是查询数据库获得，
+比较简陋，算是学习web开发的一个实验品吧。设计的思路来自<a href="https://github.com/renxing/quora-python">这个</a> 以及 ruby-china。</p>
+
+<!--more-->
+
+
+<p>项目地址<a href="https://github.com/tianyaqu/quora-python">在此</a></p>
+
+<p><img src="/images/a-zhihu-fork-home.png" title="home page" ></p>
+
+<p><img src="/images/a-zhihu-fork-discovery.png" title="discovery page" ></p>
+
+<p><img src="/images/a-zhihu-fork-topics.png" title="topics page" ></p>
+
+<p><img src="/images/a-zhihu-fork-profile.png" title="profile page" ></p>
+]]></content>
+  </entry>
+  
+</feed>

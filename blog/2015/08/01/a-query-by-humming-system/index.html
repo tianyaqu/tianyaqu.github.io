@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>哼唱音乐检索系统 - When Winter Fell</title>
+  <meta name="author" content="tianyaqu">
+
+  
+  <meta name="description" content="">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 40px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="When Winter Fell" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	// hide #back-top first
+	$("#back-top").hide();
+	
+	// fade in #back-top
+	$(function () {
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {
+				$('#back-top').fadeIn();
+			} else {
+				$('#back-top').fadeOut();
+			}
+		});
+
+		// scroll body to 0px on click
+		$('#back-top a').click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 800);
+			return false;
+		});
+	});
+
+});
+</script>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?947b1b0038a253fb50732e178e5ec319";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">When Winter Fell</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/search" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:tianyaqu.com" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">哼唱音乐检索系统</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-08-01T17:09:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2015</time>
+        
+        
+          | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>做这个项目纯粹是好玩。问题是这么来的，没事躺床上听歌，发现网易云音乐有个“听歌识曲”功能，对着手机唱了一段，然而并没有什么用。一度怀疑
+自己的演唱水平下降了，甚至开始怀疑人生。不过经过一番研究后，却为我打开了一扇知识的大门。</p>
+
+<p>原来网易不是让人唱歌识别的，它使用的是声纹识别技术，对音乐片段提取特征(傅立叶描述子)做哈希，也就是说对建好索引的音乐只有replay才能准确
+检索到，同一首歌的翻唱、清唱都不会当作同一首歌。</p>
+
+<p>原来我想要的是一个哼唱检索系统，学名叫 Query By Humming System,它与声纹识别的不同在于特征选取上。</p>
+
+<!--more-->
+
+
+<h2>歌曲特征的提取</h2>
+
+<p>声纹识别使用傅立叶描述子特征，我们知道，声音可以可做是多个三角波的叠加，根据傅立叶描述子可以重建原始信号。它提取了傅立叶特征本质上
+是对原始信号做了压缩，也可以看作是一个hash的过程。只有一模一样的声音才能得到一样的傅立叶特征。所以杨宗纬与孙燕姿的“雨天”在声纹识别看来
+就是两首歌。</p>
+
+<p>哼唱检索的的特征提取为一个叫音高(pitch)的特征，得到一个音高序列。音高这个名词其实是试图用数值化方法来描述人对音乐的理解，感兴趣的可以以[fundamental frequency,pitch]为关键字作为进一步的理解。这样，哼唱的音乐检索就是查询特征数据库中与该序列最接近的音高序列，其对应的即最可能
+哼唱的歌曲。</p>
+
+<p>此外，在pitch之上可以进一步提取特征，称为note特征，它其实是将pitch特征离散化，将音高固定在几个段位上。在时间段(t_i,t_i+1)之间音高为n,
+将pitch序列分割成(note,duration)这样的序列，与midi音乐格式暗合。</p>
+
+<p>不管是选pitch特征还是note特征，检索的任务就变成了两个时间序列的匹配过程，匹配的相似度以其距离来度量。
+一般来讲note特征匹配速度较快，但是精度低一些，所以常用算法都是将两者结合起来，利用note特征筛选出种子歌曲，在种子中再根据pitch特征匹配，
+根据两次的筛选结果联合打分。</p>
+
+<h2>时间序列的比较</h2>
+
+<p>linear scaling 和 dtw是常用的方法。这两个一个是线性拉伸，一个是动态规划求最优路径，老生常谈了。</p>
+
+<p>论文中看到有用高维数据索引的方式，这是第一次见到，不禁眼前一亮。采用方k法叫做局部敏感哈希(Locality-Sensitive Hashing, LSH)，它将近似的序列尽量映射到一起，类似于找k近邻的k-d树，除了k-d树在高纬数据中表现不佳(不停的递归回溯父节点的其他子节点)。这个方法会在后期加入我的系统中去。</p>
+
+<h2>存在的问题</h2>
+
+<p>时间序列的比较，算法的计算量会随着序列长度暴涨，所以就不适合对整首歌曲特征提取。不过，在多数应用场景中人会哼唱歌曲开头或副歌部分，
+所以对这两部分特征提取不失为一个好办法。然而，又引入一个问题，如何自动找出歌曲副歌部分?需要进一步研究。目前的实现只考虑了歌曲开头
+部分的特征。</p>
+
+<p>计算速度慢，可以考虑使用GPU加速查询速度，前期资料准备过程中，看到有几篇论文有实现，剩下的就是纯工程问题了。</p>
+
+<p>深度学习在图像领域运用的风生水起，语音与图像实在是有太多相似的地方，语音识别已经使用了深度学习取得不错的效果，哼唱检索却没有看到
+相关的论文，实在是可惜。</p>
+
+<p>目前只是一个雏形系统，速度与功能都不太满意，希望毕业前能把这个有意思的事情做好，详见<a href="https://github.com/tianyaqu/guess-your-song">你唱我猜</a>。</p>
+
+<p>TODO:</p>
+
+<ul>
+<li>提供web、微信使用接口</li>
+<li>副歌纳入提取特征</li>
+<li>计算速度优化</li>
+<li>深度学习方法研究</li>
+</ul>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://tianyaqu.com">tianyaqu</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://tianyaqu.com">tianyaqu</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-08-01T17:09:00+08:00" pubdate data-updated="true">Aug 1<span>st</span>, 2015</time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/信号与图像/'>信号与图像</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/qbh/'>qbh</a>, <a class='tag' href='/blog/tags/heng-chang-jian-suo/'>哼唱检索</a>, <a class='tag' href='/blog/tags/yin-le/'>音乐</a></span>
+		
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2015/06/29/oracle-a-story-of-the-wronged-years/" title="Previous Post:
+        甲骨文-一些杂碎">&laquo; 甲骨文-一些杂碎</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+    </ul>
+    
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="comments" aria-live="polite"><!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="哼唱音乐检索系统"></div>
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tianyaqu"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- Duoshuo Comment END -->
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer"><p id = "back-top">
+	<a href="#top"><span></span>Back to Top</a>
+</p>
+<hr>
+<p>
+  Copyright &copy; 2009 - 2015 - <a href="http://tianyaqu.com">tianyaqu</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> </span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

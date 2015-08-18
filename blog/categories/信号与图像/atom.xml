@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 信号与图像 | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/categories/信号与图像/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2015-08-01T23:31:21+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[tianyaqu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[哼唱音乐检索系统]]></title>
+    <link href="http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system/"/>
+    <updated>2015-08-01T17:09:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/08/01/a-query-by-humming-system</id>
+    <content type="html"><![CDATA[<p>做这个项目纯粹是好玩。问题是这么来的，没事躺床上听歌，发现网易云音乐有个“听歌识曲”功能，对着手机唱了一段，然而并没有什么用。一度怀疑
+自己的演唱水平下降了，甚至开始怀疑人生。不过经过一番研究后，却为我打开了一扇知识的大门。</p>
+
+<p>原来网易不是让人唱歌识别的，它使用的是声纹识别技术，对音乐片段提取特征(傅立叶描述子)做哈希，也就是说对建好索引的音乐只有replay才能准确
+检索到，同一首歌的翻唱、清唱都不会当作同一首歌。</p>
+
+<p>原来我想要的是一个哼唱检索系统，学名叫 Query By Humming System,它与声纹识别的不同在于特征选取上。</p>
+
+<!--more-->
+
+
+<h2>歌曲特征的提取</h2>
+
+<p>声纹识别使用傅立叶描述子特征，我们知道，声音可以可做是多个三角波的叠加，根据傅立叶描述子可以重建原始信号。它提取了傅立叶特征本质上
+是对原始信号做了压缩，也可以看作是一个hash的过程。只有一模一样的声音才能得到一样的傅立叶特征。所以杨宗纬与孙燕姿的“雨天”在声纹识别看来
+就是两首歌。</p>
+
+<p>哼唱检索的的特征提取为一个叫音高(pitch)的特征，得到一个音高序列。音高这个名词其实是试图用数值化方法来描述人对音乐的理解，感兴趣的可以以[fundamental frequency,pitch]为关键字作为进一步的理解。这样，哼唱的音乐检索就是查询特征数据库中与该序列最接近的音高序列，其对应的即最可能
+哼唱的歌曲。</p>
+
+<p>此外，在pitch之上可以进一步提取特征，称为note特征，它其实是将pitch特征离散化，将音高固定在几个段位上。在时间段(t_i,t_i+1)之间音高为n,
+将pitch序列分割成(note,duration)这样的序列，与midi音乐格式暗合。</p>
+
+<p>不管是选pitch特征还是note特征，检索的任务就变成了两个时间序列的匹配过程，匹配的相似度以其距离来度量。
+一般来讲note特征匹配速度较快，但是精度低一些，所以常用算法都是将两者结合起来，利用note特征筛选出种子歌曲，在种子中再根据pitch特征匹配，
+根据两次的筛选结果联合打分。</p>
+
+<h2>时间序列的比较</h2>
+
+<p>linear scaling 和 dtw是常用的方法。这两个一个是线性拉伸，一个是动态规划求最优路径，老生常谈了。</p>
+
+<p>论文中看到有用高维数据索引的方式，这是第一次见到，不禁眼前一亮。采用方法叫做局部敏感哈希(Locality-Sensitive Hashing, LSH)，它将近似的序列尽量映射到一起，类似于找k近邻的k-d树，除了k-d树是固定维数的。这个方法会在后期加入我的系统中去。</p>
+
+<h2>存在的问题</h2>
+
+<p>时间序列的比较，算法的计算量会随着序列长度暴涨，所以就不适合对整首歌曲特征提取。不过，在多数应用场景中人会哼唱歌曲开头或副歌部分，
+所以对这两部分特征提取不失为一个好办法。然而，又引入一个问题，如何自动找出歌曲副歌部分?需要进一步研究。目前的实现只考虑了歌曲开头
+部分的特征。</p>
+
+<p>计算速度慢，可以考虑使用GPU加速查询速度，前期资料准备过程中，看到有几篇论文有实现，剩下的就是纯工程问题了。</p>
+
+<p>深度学习在图像领域运用的风生水起，语音与图像实在是有太多相似的地方，语音识别已经使用了深度学习取得不错的效果，哼唱检索却没有看到
+相关的论文，实在是可惜。</p>
+
+<p>目前只是一个雏形系统，速度与功能都不太满意，希望毕业前能把这个有意思的事情做好，详见<a href="https://github.com/tianyaqu/guess-your-song">你唱我猜</a>。</p>
+
+<p>TODO:</p>
+
+<ul>
+<li>提供web、微信使用接口</li>
+<li>副歌纳入提取特征</li>
+<li>计算速度优化</li>
+<li>深度学习方法研究</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[玩一把HMM的掌纹识别]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm/"/>
+    <updated>2015-05-15T22:13:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm</id>
+    <content type="html"><![CDATA[<p>上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。</p>
+
+<p>看到这个题目的人，如果对马尔科夫模型有所了解的话，一定会很奇怪，马尔科夫模型建立的两个关键要素是观测序列与状态转移，这怎么体现在掌纹上呢？</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>说起来，这个理论最早是从人脸识别上搬运过来的。将人脸图像从上到下分成若干个子块，这些子块自上而下依次组成观测序列，每个子块所蕴涵的信息被当作状态。这个状态可以这么理解，它是由人脸的生物特征，比如相互位置、颜色、形状等在统计意义上的抽象。也即是，认为“状态”蕴含了人脸的生物特征，但是具体蕴含哪些？有多大关联却并不作直接解释(如果你知道合理的解释，请务必指导我)。</p>
+
+<p>如此，对人脸图像进行切分，得到一系列的子块，作为观测序列。我们知道，马尔科夫模型有这么几个应用场景。</p>
+
+<pre><code>1.根据模型参数与观测序列，求观测序列出现的概率
+2.已知观测序，估计模型参数
+3.根据模型和观测序，求最可能的状态序列
+</code></pre>
+
+<p>首先，我们面临的是第二种问题。我们认为用马尔科夫模型可以描述切片序列的变化规律，根据这些切片序列推断模型参数，这是参数估计问题，也是个无监督学习过程，经常用Baum-Welch算法训练得到参数。</p>
+
+<p>然后是关键的一步。当新来的人脸图片时候，首先对其切片获得观测序列，利用第一步中获取的模型参数，计算其可能的状态及其似然值，作为分类的依据。这对应上述第三种问题，可以用维特比算法求解。</p>
+
+<h2>训练</h2>
+
+<p>掌纹识别即与人脸的识别方法完全相同，不过还有一些细节需要阐述下。由于马尔科夫模型的观测变量与状态变量是离散的，所以要找到一种方法将连续的“切片”离散化。</p>
+
+<p>矩阵的奇异值向量具有稳定性、位移不变、旋转不变等优良特性，可以用来很好的描述矩阵，所以选取它作为“切片”数据的特征。进一步，将这些特征使用k-means聚类，聚类的标号作为该切片的“状态”。用户需要自己决定状态数目，以及观测概率的分布数量。不过据一篇来自清华的论文"DSW Feature Based Hidden Marcov Model: An Application on Object Identification"的实验结果，状态在6-7时候效果较佳。</p>
+
+<h2>识别</h2>
+
+<p>按照训练一节，对每一个人训练出一套模型参数。对于新来的待识别图像，切片、奇异值分解、状态分类。分类使用欧几里德距离方式确定，根据它与不同分类的中心距离，取最近的作为类标号。这样便获得一个基于类标号的观测序列，将它代入各个用户模型分别计算其最大似然值(场景三)，取其最大似然值作为识别的结果。</p>
+
+<h2>实现</h2>
+
+<p>见我的 github repo <a href="https://github.com/tianyaqu/palm-identification-with-hmm">palm-identification-with-hmm</a></p>
+
+<h2>结果与改进</h2>
+
+<p>使用PolyU的<a href="http://www4.comp.polyu.edu.hk/~biometrics/">Palmprint Database</a>进行实验，为标准化的128*128图，省去了预处理过程。</p>
+
+<p>据实验结果，在4人的识别中，效果可以达到60-70%，人数再多效果就很快急剧下降，不忍直视。
+可从如下两个方面着手：</p>
+
+<p>1.模型训练时候的初始观测概率分布使用了随机值，导致结果会有跳动。可以考虑在不同初始值情况下，通过多次迭代找出最优的模型参数，后续不再训练。</p>
+
+<p>2.模型的可解释性。由于模型中的状态并没有直接对应的物理意义，颇有点类似神经网络的神经元个数的意味。进一步提高识别率需要与其他方法结合。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[分离一个核模板]]></title>
+    <link href="http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter/"/>
+    <updated>2014-04-10T20:54:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/04/10/seperate-a-sperable-filter</id>
+    <content type="html"><![CDATA[<p>数字图像处理经常用卷积来作滤波，卷积核的大小的选择对计算量的影响很大，在一个卷积核大小<script type="math/tex">M\times N</script>区域内的运算量为<script type="math/tex">M^ 2\times N^ 2</script>。而我们知道，卷积满足结合律，</p>
+
+<script type="math/tex">I \ast  h = I \ast  (h1\times h2)\ = I \ast  h1 \ast h2\quad </script>
+
+
+<p>这样，如果能将滤波器（二维）转化成两个一维的乘积形式，计算量就降低到<script type="math/tex">2 \times M \times N</script>，这样会大大简化计算量，尤其是是当图像比较大的时候，计算量的优势就越明显。<a href="http://blog.csdn.net/zddblog/article/details/7450033">这篇文章</a>给出了不同高斯实现的性能比较。
+最典型的应用当属二维高斯滤波了，二维高斯核刚好等同于两个一维高斯的乘积，二维高斯核函数可以用一维的高斯核分别在x轴和y作卷积来代替。</p>
+
+<!--more-->
+
+
+<pre><code>% kernel width  6*sigma (-3sigma,3sigma) should be ok
+cutoff = ceil(3*sigma);  
+% 1D gauss kernel.width puls one to make it symentric
+h = fspecial('gaussian',[1,2*cutoff+1],sigma);  
+out = conv2(h,h,I,'same');
+</code></pre>
+
+<p>OK，高斯这个是情况特殊（恩，高斯可是跟上帝掷色子的人）。现在我们有任意一个核函数模板，怎么去分解这个矩阵呢？
+这里有两种方法，先说一下简单的方法。它的思路是利用可分离核函数的对称性，任意取出一列Cn，作为分解列向量h1，取对应行Rn，同时为了保证归整，h2 = Rn/K(n,n)作为行向量。不过，可能会遇到除0的情况，所以更普遍意义上是这么实现的：</p>
+
+<pre><code>% Pick the column with largest values
+[~,I] = max(sum(abs(h))); 
+h1 = h(:,I);
+% Pick the row with largest values
+[~,I] = max(sum(abs(h),2)); 
+h2 = h(I,:)/h1(I);
+</code></pre>
+
+<p>第二种类方法，充分利用了svd的强大计算能力。svd可以将一个矩阵（核模板只是一个方阵）分解成两个正交矩（这两个矩不正交）夹乘一个对角阵，</p>
+
+<script type="math/tex">A=US{ V }^{ T } </script>
+
+
+<p>那么，很容易得到 AV = US，又由于V是一个正交矩阵，取任一列作<script type="math/tex">V_i</script>,有</p>
+
+<script type="math/tex">A{V_i}{V_i}^{T}=AE=A </script>
+
+
+
+
+<p>如此，便得到 <script type="math/tex">AV_i</script>与 $V_{i}^T$ 为卷积核的两个一维分量。</p>
+
+
+<pre><code>[u,s,v] = svd(h);
+s = diag(s);
+if sum(s &gt; eps('single'))==1
+    h1 = u(:,1)*s(1);
+    h2 = v(:,1)';
+else
+    error('Kernel not separable!')
+end
+</code></pre>
+
+<p>注：文中的代码来源于 <a href="http://www.cb.uu.se/~cris/blog/index.php/archives/288">Cris's Image Analysis Blog</a>
+ps:
+怎样才能确认该核模板为可分离（seperable）呢？答：秩为1;
+这方法是不是降维啊？肯定是。挖个坑，以后补上PCA。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Listen to the air]]></title>
+    <link href="http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/"/>
+    <updated>2014-01-11T01:59:40+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air</id>
+    <content type="html"><![CDATA[<p>sherlock深吸一口气双目深凝耳朵瞪大嘴角含笑身形飘逸才思敏捷之后：Watson,Moriaty gets me another case!啊?发生什么事情了么？神探的技能升级了！不仅能感受周围人思考时的annoying noise，而且能截获电波！再也不用担心手机没电，漏掉whip queen的求救短信了。</p>
+
+
+<p>这当然是个笑话。可是，怎么才能具有这种特殊本领呢？首先，你得具有计算能力，其次计算能力还得十分高效（否则你就提前一周交代好家人做好墓碑原地埋葬），再次还需要IT人士打造一款[贴心]安装的app。什么样的app?</p>
+
+<!--more-->
+
+
+<p>我们在听广播节目的时候，需要指定一个频率，比如102.1MHZ，然后才能收听。可是这个跟好男人曾老师在演播室的声音有什么关系呢？声音本质上是一个正弦波，人类发声的是一个频率比较低的正弦波。平时对话的时候，我们直接将这个波发送到空气中，传到对方的耳朵里，但是距离很有限，通信基本靠吼也就只能在村里才有用武之地。</p>
+
+<p>可是高频信号却有一些十分有利的特性：其一传送距离远而且需要能量小；其二是它的宽度比较大，可以多个信号复用同一个信道。102.1MHZ就是一个高频的信号，电台选用它希望可以把曾老师富有魅力的声音附带上去，从而得到一个高频信号，他的中心频率刚好是102.1MHZ。</p>
+
+<p>数学家们是这么做出来的：学名叫调制。</p>
+
+<p><img src="/images/psb.png" alt="调制" /></p>
+
+<p>y 表示调制后的信号，x为原始信号，fc为载波频率</p>
+
+<p>注意到，y的相位与源信号是有紧密关系的（看不出来？相位先微分再作除法就是x）。所以有人说调频的信息是由波的频率附带的，它对幅度方向的噪音不敏感。</p>
+
+<p>然后把y放到电台的传送设备上OK.现在在大街上都能收到这电波了，嗯，空气中好像弥漫着电波的味道。曾老师松了一口气，终于没事了。可是他还很忧虑：似乎还有隔壁那个山寨电台你的月亮我的心的101.2MHZ的味道...风声雨声读书声，当然还有菜市场的叫卖声，手机电话的电波。。。这该怎么区分呢？傅立叶从罗密欧怀里走出来：这就是我存在的意义。。。</p>
+
+<p>傅立叶变换人称为信号界的显微镜，不是白吹牛的。不用傅立叶变换，我们还是回忆高等数学的傅立叶基数。</p>
+
+<p><img src="/images/fourier.png" alt="傅里叶基数" /></p>
+
+<p>公式指数部分代表着频率。傅立叶基数的普遍意义是将一个信号分解出不同频率（k）的分量。   好了，经过傅立叶这个照妖镜，得到来自关心频道的信息，曾老师你可以放心松口气了。现在得到的是经过载波之后的信号，需要进一步把载波去掉，才能最终得到演播室的原始声音，这就是所谓的解调。跟电台的操作刚好相反。前面说道，信号的相位与源信号紧密相关，那么获取了相位信息，也就能还原出源信号。我不告诉你这种方法叫Quarature detectator。于是我讲一下另一
+种方法。</p>
+
+<p>上公式</p>
+
+<p><img src="/images/demodulation.png" alt="解调" /></p>
+
+<p>依然是求导。不过这个方法却不需要计算相位。微分之后，却把相位信息放到了正弦函数的系数上了。由于系数携带着被调频的信息，所以歪国人称之为envelope，我国称之为包络。这个包络可以用硬件，也可用软件实现。Ac,fc,fdelt 是常值，据此很容易推出x。</p>
+
+<p>Q.E.D.</p>
+]]></content>
+  </entry>
+  
+</feed>
