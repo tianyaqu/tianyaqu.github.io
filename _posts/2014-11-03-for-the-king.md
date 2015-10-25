@@ -3,7 +3,7 @@ layout: post
 title: "For The King"
 date: 2014-11-03 15:24
 comments: true
-categories: 小说 
+categories: 不求甚解 
 tags: [法国大革命,爱情]
 ---
 这是一本小说，年初亚马逊打折时候买的囤货，弥补一下《冰与火之歌》新卷迟迟未出导致的书荒。看名字以为是Lord与Knight刀光剑影类型的故事，

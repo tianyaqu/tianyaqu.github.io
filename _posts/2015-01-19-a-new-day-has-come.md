@@ -3,7 +3,7 @@ layout: post
 title: "A new day has come"
 date: 2015-01-19 01:17
 comments: true
-categories: 小说 
+categories: 不求甚解
 tags: [love story]
 ---
 This is an empty post,all the blanks will be filled later.
