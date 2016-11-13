@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 编程思想 | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/categories/bian-cheng-si-xiang/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2016-11-13T17:11:46+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[Alex]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[一个简单的sub/pub系统 (基于 Golang Channel机制)]]></title>
+    <link href="http://tianyaqu.com/blog/2015/08/18/a-simple-sub-slash-pub-system-with-go/"/>
+    <updated>2015-08-18T20:23:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/08/18/a-simple-sub-slash-pub-system-with-go</id>
+    <content type="html"><![CDATA[<p>go的channel机制是语言内置的通信方式，可以轻松实现各个不同模块(协程)之间的同步、通信。本文利用channel实现一个简单的sub/pub系统原型。</p>
+
+<p>大致流程为：server建立后，开启一个协程监听控制命令，server内部会维护一个注册表，记录订阅话题的用户，当要发布消息时候，将订阅该话题的用户逐个发送消息即可。具体实现的时候，订阅的用户被当作一个channel，控制命令也是一个channel，控制命令的channel负载用户的控制信息，其中包括用户的channel信息，通过穿针引线的方式，将主题与订阅的用户联系起来。命令channel达到了channel复用的效果，同时肩负着控制命令接收与分发的任务。</p>
+
+<!--more-->
+
+
+<p>如下是具体实现，code explains itself well</p>
+
+<pre><code>package main
+
+import "fmt"
+
+const (
+    sub int = iota
+    pub
+    unsub
+)
+
+type Pubsub struct{
+    //command channel,multiplexing
+    cmdChan chan cmd
+    capacity int
+}
+
+type cmd struct {
+    op     int
+    topic string
+    ch     chan interface{}
+    msg    interface{}
+}
+
+func PubServer(capacity int) *Pubsub {
+    ps := &amp;Pubsub{make(chan cmd),capacity}
+    go ps.start()
+    return ps
+}
+
+func (ps *Pubsub) Sub(topic string) chan interface{}{
+    ch := make(chan interface{},ps.capacity)
+    ps.cmdChan &lt;- cmd{op:sub,topic:topic,ch:ch}
+    return ch
+}
+
+func (ps *Pubsub) Pub(msg interface{},topic string){
+    ps.cmdChan &lt;- cmd{op: pub, topic: topic, msg: msg}
+}
+
+//topic -&gt;sublist
+type registry struct{
+    topics map[string][]chan interface{}
+}
+
+//bind sub channels to topics
+func (reg *registry) add(topic string,ch chan interface{}){
+    if reg.topics[topic] == nil {
+        reg.topics[topic] = make([]chan interface{},0,5)
+    }
+    reg.topics[topic] = append(reg.topics[topic],ch)
+}
+
+//kick the ball
+func (reg *registry) send(topic string,msg interface{}){
+    for _,ch := range reg.topics[topic]{
+        ch &lt;- msg
+    }
+}
+
+//worker,ready to dispatch
+func (ps *Pubsub) start(){
+    reg := registry{
+        topics:make(map[string][]chan interface{}),
+    }
+loop:
+    for cmd := range ps.cmdChan{
+        if cmd.topic == ""{
+            continue loop
+        }
+        switch cmd.op {
+            case sub:
+                reg.add(cmd.topic, cmd.ch)
+            case pub:
+                reg.send(cmd.topic, cmd.msg)
+            case unsub:
+                ; //skipped,for it's no easy to remove an element given a slice
+        }
+    }
+
+}
+
+func main() {
+    s := PubServer(1)
+    ch1 := s.Sub("english")
+    ch2 := s.Sub("french")
+    ch3 := s.Sub("chinese")
+
+    s.Pub("hello english", "english")
+    s.Pub("hello french", "french")
+    s.Pub(1.222222, "chinese")
+
+    fmt.Printf("%v ","hello english" == &lt;-ch1)
+    //shall be false
+    fmt.Printf("%v ","hello frenchxxx" == &lt;-ch2)
+    fmt.Printf("%v ",1.222222 == &lt;-ch3)
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[模仿一个问答网站]]></title>
+    <link href="http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website/"/>
+    <updated>2015-06-26T22:10:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/06/26/a-zhi-hu-like-website</id>
+    <content type="html"><![CDATA[<p>为了适应互联网发展的浪潮，捣鼓出一个问答网站出来。集成问答、timeline、好友、话题、问题关注，以及简陋的热门功能。
+采用tornado + mongodb实现，timeline使用push的方式，其中一些数据比如timeline没有使用redis存储，每次都是查询数据库获得，
+比较简陋，算是学习web开发的一个实验品吧。设计的思路来自<a href="https://github.com/renxing/quora-python">这个</a> 以及 ruby-china。</p>
+
+<!--more-->
+
+
+<p>项目地址<a href="https://github.com/tianyaqu/quora-python">在此</a></p>
+
+<p><img src="/images/a-zhihu-fork-home.png" title="home page" ></p>
+
+<p><img src="/images/a-zhihu-fork-discovery.png" title="discovery page" ></p>
+
+<p><img src="/images/a-zhihu-fork-topics.png" title="topics page" ></p>
+
+<p><img src="/images/a-zhihu-fork-profile.png" title="profile page" ></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rcpp开发R包]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/24/develop-r-packages-with-rcpp/"/>
+    <updated>2015-05-24T11:43:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/24/develop-r-packages-with-rcpp</id>
+    <content type="html"><![CDATA[<p>最近一直在忙着做一个金融数据库系统的设计开发工作（当然不是database implementation了）。用mongodb搭建，能自动化导入数据并给不同语言提供查询接口。所以这个月俨然成为一个胶水匠，不停的给各个语言写wrapper。敌方阵营派出python、matlab、R与我交锋，史称“三英战tianyaqu”，奈何某技高一筹，均被我一一杀退。关于R开发的网上资料(中文)着实太少，统计之都上面给出的都是难度与官方timesTwo旗鼓相当的花拳绣腿。下面给出一些个人的浅薄经验，希望能给后人一些思路。</p>
+
+<p>这当然不能作为一个开发R包的系统描述，Dirk Eddelbuettel大神给出的Rcpp <a href="http://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-extending.pdf">tutorial A</a> 和 <a href="http://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-package.pdf">tutorial B</a> 早已彪炳千秋，当然如果你想知道更详细、全面的底层实现，官方的<a href="http://cran.r-project.org/doc/manuals/r-release/R-exts.html">Writing R Extensions</a> 也是个不错的参考。</p>
+
+<!--more-->
+
+
+<p>在R上扩展，目的无外乎这：提高运算速度，功能依赖(第三方库) ，代码复用。我算是第三种，虽然我反对这个做法，奈何做不了决定。所以就把alternative<a href="https://github.com/tianyaqu/mongodb-in-financial-market">开源</a>了。:)</p>
+
+<h3>数据交换</h3>
+
+<p>R提供的扩展实现了一种机制，所有的对象都可以用SEXP来传递。但这仍然有点繁琐，从SEXP到C/C++的对象需要频繁使用PROTECT避免变量被R的垃圾回收机制收割，然后使用诸如REAL(), INTEGER()来访问裸数据。在使用RCPP后，生活就变得非常简单，将接口函数用EXPORT出去，就可以被RCPP无缝包装，内部实现就可以完全使用C++的语法搭房子。如何要使用第三方库，直接裹上一层包装，在其中调用第三方库与普通的用法没什么两样。而这最终就被自动翻译成R提供的SEXP体系去，用户就免去了关注SEXP系统的劳苦。</p>
+
+<p>下面的代码片段是调用第三方的例子，它实现wrapper的功能。可以看到我们的wrapper接口直接使用的是std::string格式，没有使用SEXP。与此相反，需要从c++回传给R的时候，Rcpp::CharacterVector,Rcpp::NumericVector,Rcpp::DataFrame 可以帮我们传递字符串向量、数值向量甚至是data.frame。指针(reference-like)也可以通过NumericVector实现，只不过是只操作vector的首元素罢了。</p>
+
+<pre><code>//' @param so many... 
+//' @export
+
+// [[Rcpp::export]]
+DataFrame R_GetTicks(std::string market,std::string contractId, unsigned start, unsigned end, int limit)
+{
+    struct Tick* result_buffer = 0;
+    unsigned len = 0,i = 0;
+    //调用第三方library,或者functions
+    int ret = m_GetTicks(&amp;result_buffer,&amp;len,market.c_str(),contractId.c_str(), start, end, limit);
+
+    ....
+    //manipulate result buffer to create dataframe
+    ....
+    return df
+}
+</code></pre>
+
+<p>由于提供rcpp提供c++的环境，就可以完全利用C++的遗产，呼风唤雨都不是梦想。数据序列化反序列化、网络连接什么的都是小菜一叠，没什么不可能，只有发挥你的想象力。Rcpp最终利用Call机制给R提供接口。 mongoquery_R_GetTicks是Rcpp做的Name mangling，是wrapper被翻译后的名字。</p>
+
+<pre><code>R_GetTicks &lt;- function(market, contractId, start, end, limit) {
+    .Call('mongoquery_R_GetTicks', PACKAGE = 'mongoquery', market, contractId, start, end, limit)
+}
+</code></pre>
+
+<h3>第三方库</h3>
+
+<p>由于R只接受GCC系的工具链，在linux下面不成什么问题，在win成了大问题，这意味着项目依赖的所有第三方库都需要用rtools(其实它也是mingw工具套装)编译链接。所幸的是，多数的优秀第三方库都可以在mingw编译通过(比如boost,MLPACK)。只消用Makevars.win将依赖库(mingw compiled)加入即可。</p>
+
+<pre><code>#BOOST_INC为设置的系统变量，可以使用诸如-IE:/src/boost/inc 方式导入头文件依赖，
+#lib path同理
+PKG_CPPFLAGS= -I$(BOOST_INC)
+PKG_LIBS =  -L../lib -lboost_xxx 
+</code></pre>
+
+<p>最终注意package发布时候要将使用的库一块发布。</p>
+
+<h3>工具</h3>
+
+<h4>1.rstudio</h4>
+
+<p>rstudio已经是标配了吧，支持舒心地r package开发。直接使用Rcpp.package.skeleton也无伤大雅，不过注意namespace文件需要手动更改。rstudio的不足在于写cpp代码时候不顺心，老迈的像微软官方记事本。</p>
+
+<h4>2.qtcreator</h4>
+
+<p>qtcreator 支持建立标准c/c++项目，协助c++部分的开发与调试。它支持自主选择工具链，选择rtools的工具链(或者将qtcreator的工具链作为rstudio的工具链)，选好工具链，可以编译第三方依赖库丢给Rcpp链接。</p>
+
+<p>这次意外的收获是发现mingw对win的支持如此之好。项目用到了lzma压缩算法，7zip lzma sdk只提供了msvc的编译工程，翻了下代码，其压缩、解压缩使用了win的多线程，原以为路子就此断了，摩拳擦掌正准备将pylzma(基于7zip lzma sdk) 移植到标准过来，做一件利国利民的好事。却发现pylzma的多线程模块作者根本没作改动，而pylzma 支持mingw作为编译核心。于是依样画瓢，获得lzma库+1。</p>
+
+<p>稍微dig下，原来mingw 使用原生w32api提供运行环境(Crgwin 做的是POSIX emulation,基于X Server的program唯一选择)</p>
+
+<blockquote><p>As MinGW uses the standard Microsoft C runtime library which comes with Windows，you should be careful and use the correct function to generate a new thread.</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Matlab 闲话]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/14/matlab-stuff/"/>
+    <updated>2015-05-14T23:04:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/14/matlab-stuff</id>
+    <content type="html"><![CDATA[<p>matlab 调用c dll时,最可恨的是dll与matlab之间数据的交互，在dll中中获取的数据，如果内容比较大。那么回传数据的时候，是由matlab准备空间呢，
+还是dll中申请。经验是在dll中申请，并向matlab提供释放接口。</p>
+
+<p>这样matlab使用者就不必担心内存申请、释放问题（实际情况是matlab的使用者已经完全不知内存为何物），matlab的获取的空间是通过blank,zeros这种矩阵方式获得的，用起来比较别扭，还不容易凑够心仪大小buffer。</p>
+
+<!--more-->
+
+
+<h2>1. matlab与dll</h2>
+
+<p>具体实现，可以采用Multilevel Pointers方式hack。 matlab的官方样例shrlibsample有提到这么个实例，但语焉不详。这里贴出详细步骤，以
+<a href="https://github.com/tianyaqu/mongodb-in-financial-market">mongodb-in-financial-market</a>中的例子来说一下。</p>
+
+<p>首先dll的接口要通过__declspec(dllexport)修饰，这里将其定义为EXPORT宏,这样在定义时候用EXPORT修饰，看起来自然的多。</p>
+
+<pre><code>#define EXPORT __declspec(dllexport)
+
+EXPORT int decompress(const char* market,unsigned char *compressed, struct TickData** result, unsigned int* out_len);
+EXPORT void free_mem(void* ptr);
+</code></pre>
+
+<p>看到decompress的第三个参数result，为回传给matlab的buffer块首地址，二级指针是让使用者不必担心内存申请问题，只准备好一个指针大小空间，
+dll中会将它挂在malloc获得的空间上。最后一个参数提供了buffer长度out_len，用户只要注意不超出out_len就不会越界。</p>
+
+<p>而调用者只需要准备好数据，二级指针和长度，然后利用回传的buffer和长度，根据offset遍历即可。</p>
+
+<pre><code>%dx为输入数据,对应compressed.
+compress_ptr = libpointer('uint8Ptr',dx);
+tickdDta_ptr = libpointer('TickData');
+len = libpointer('uint32Ptr',0);
+ret = calllib('decompress','decompress',db,compress_ptr,tickdDta_ptr,len);
+if ret == 0
+    for i = 1:len.Value
+    offset = i-1;
+    ptr = get(tickdDta_ptr + offset);
+    day = ptr.Value.ActionDay;
+    updatetime = ptr.Value.UpdateTime;
+    mill = ptr.Value.UpdateMillisec;
+    ...
+end
+</code></pre>
+
+<h2>2. datenum与毫秒</h2>
+
+<p>题外话。datenum处理毫秒问题。datenum不提供直接毫秒用毫秒构造时间，如：datenum(year,month,day,hour,minute,sec)，毫秒直接报错。
+不过可以将毫秒折算成单位天时间，补到秒级的datenum上去，这样得到的datenum实际上存储的即是毫秒级数据。</p>
+
+<pre><code>dt = datenum(year,month,day,hour,minute,sec) + millsecond/(1000*60*60*24);
+</code></pre>
+
+<p>直接用datestr不能够显示毫秒数据，需要通过格式字符FFF来精确显示到毫秒</p>
+
+<pre><code>datestr(dt,'yyyy-mm-dd HH:MM:SS:FFF')
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[闭包，装饰器与尾递归]]></title>
+    <link href="http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive/"/>
+    <updated>2015-03-13T19:33:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/03/13/closure-decorator-and-tail-recursive</id>
+    <content type="html"><![CDATA[<p>最近一周忙里偷闲，看着pdf学习Scala语言，算是初次接触函数式编程吧(如果不算python的foreach、迭代器与lamda表达式的话)。基本数据类型都是老生常谈了，函数式编程强调抛弃中间变量的做法在python中也算提前打了预防针，不过漫天遍地的新语法真让人开眼，比如古怪的占位符用法、不知所云的偏应用函数(partially applied function，书中的例子看起来好像在演示默认参数的用法)，以及一些奇技淫巧，比如String<em> 与 _</em>的不同妙用。总的感觉上是跟传统的语言(c/c++,java)在语法表达上都相差很远，读完不免有种囫囵吞枣的味道。</p>
+
+<p>这里梳理下几个“高大上”的概念，结合一部分python语言的设计，聊一下闭包、尾递归，以及python的装饰器，如有理解错误欢迎指正。</p>
+
+<!--more-->
+
+
+<h2>1. 闭包与装饰器</h2>
+
+<p>闭包的定义：“闭包是由函数和与其相关的引用环境组合而成的实体”。好吧，说人话就是闭包是函数与函数环境组成的那一坨东西。Scala中函数是第一类值，不仅可以定义和调用，也能把他们像值那样传递。</p>
+
+<pre><code>var increase = (x: Int) =&gt; x + 1
+def inc(base:Int) =  (step: Int) =&gt; base + step
+</code></pre>
+
+<p>前者得到的是函数类型的increase: Int => Int = &lt; function1 >,increase是函数变量，在Scala shell中输入increase可以查看其内容。inc函数的是结果是返回一个函数类型，它具有一个可配置参数x。闭包的作用就发挥出来了，比如，可以获得以不同base的inc函数。这样base 与 step都是可配置的。</p>
+
+<pre><code>var inc_base_10 = inc(10)
+var result = inc_base_10(5) //step = 5
+</code></pre>
+
+<p>在python中，有了语法糖的帮助，闭包的一个常见用法是使用装饰器，来实现切面编程。</p>
+
+<pre><code>import time
+import functools
+
+def timeit(func):
+    @functools.wraps(func)
+    def wrapper(para):
+        start = time.clock()
+        func(para)
+        end =time.clock()
+        print 'used:', end - start
+    return wrapper
+
+@timeit
+def work(para):
+    print para
+    #do something
+    pass
+</code></pre>
+
+<p>被timeit装饰的work任务可以方便的使用timeit提供的计算时间功能，达到重用代码的目的，任何想使用计时功能的模块只要加上timeit装饰器就行了。</p>
+
+<h2>2. 尾递归</h2>
+
+<p>递归算是众所周知的概念。它不停的调用自身，在边界条件下返回结果并退出。计算阶乘和裴波那契数列使用递归已经是老生常谈。由于递归要保持每次调用的状态，期间使用的栈空间不释放，当调用次数较多时候，对内存压力很大。对处理速度要求高的场合都不建议使用递归，换由其他方式实现。</p>
+
+<p>那么尾递归呢？它是抓住了递归的痛点。它在本轮计算结束后，把本轮的结果也一并传递给了下轮，这样进入下轮计算时候，上轮的结果就没必要保持了。以计算阶乘为例：
+    factorialTailrec(5, 1)  //初始为1,传递给下轮1 * 5 = 5
+    factorialTailrec(4, 5)  // 传递给下轮4 * 5 = 20
+    factorialTailrec(3, 20)
+    factorialTailrec(3, 60)
+    factorialTailrec(2, 120)
+    factorialTailrec(1, 120)
+    120</p>
+
+<p>Scala可以自动实现尾递归的优化，Scala 编译器检测到尾递归就用新值更新函数参数，并把它替换成一个回到函数开头的跳转，所以不必担心使用尾递归的开销。不过Scala中尾递归的使用局限依然很大，JVM 指令集使实现更加先进的尾递归形式变得很困难。以下的两种情况，Scala不能优化:</p>
+
+<p>1.递归是间接的，两个函数相互调用
+    def isEven(x: Int): Boolean =
+        if (x == 0) true else isOdd(x - 1)
+    def isOdd(x: Int): Boolean =
+        if (x == 0) false else isEven(x - 1)</p>
+
+<p>2.函数调用是一个函数值
+    val funValue = nestedFun _
+    def nestedFun(x: Int) {
+        if (x != 0) { println(x); funValue(x - 1) }
+    }</p>
+
+<p>虽然funValue的确是代表了nestedFun，但是很抱歉，这种优化Scala编译器不会认为它是尾递归，它只能优化形式上非常严格的尾递归。</p>
+]]></content>
+  </entry>
+  
+</feed>

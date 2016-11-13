@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Machine Learning | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/categories/machine-learning/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2016-11-13T17:11:46+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[Alex]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Mustache——实时给人脸贴胡子]]></title>
+    <link href="http://tianyaqu.com/blog/2016/11/13/put-mustache-on-your-face/"/>
+    <updated>2016-11-13T10:45:35+08:00</updated>
+    <id>http://tianyaqu.com/blog/2016/11/13/put-mustache-on-your-face</id>
+    <content type="html"><![CDATA[<p>大约去年暑假时候，大把的时间精力又无事可做，就全放到倒腾这些百无一用的事情上来了。开始是看到一个项目，作者用php做了一个玩具，给用户上传的头像贴上性感的小胡子。当时就想，我可以做一个能够支持用户实时视频的，最后花了一周左右，也捣鼓出一个人模狗样的东西出来，就放在实验室的内网里，让师弟师妹门耍耍，后来也就慢慢忘了，十月底的时候，腾讯云的同事要征集一些小项目，把项目迁移到腾讯云，可以免费使用一年的云主机:). 哈哈，所以就有了此文。</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>给人脸贴上胡子，首先这个要有在背景中检测出人脸，并定位到口鼻位置，这部分工作要依赖目标检测算法，人脸检测的论文汗牛充栋，本文也不深究细节，可以利用现有的模型帮助快速实现功能。其次是实时图像的采集，利用了html5的getUserMedia来获取视频，采集到的视频回传到后端server后，server执行检测算法将检测到的贴图区域发送给浏览器，浏览器根据用户选好的胡子样式贴图。</p>
+
+<p>本文将从人脸检测、实时传图以及后续的https改造这三个部分来分别介绍。</p>
+
+<h2>人脸检测</h2>
+
+<p>该模块的作用是在背景图中定位出适合贴胡子的区域。显而易见，该区域正好位于人的口鼻之间位置，检测到了口鼻就基本上可以推算出适合贴胡子的位置，为了保证结果的鲁棒性，可以先行检测出背景中的人脸位置，由于口鼻是位于脸部区域之内的，以此做一次粗筛，将false positive区域剔除。</p>
+
+<p>OpenCV提供了一系列的检测算子与训练模型，我们还是奉行拿来主义，使用提供的级连分类器api：CascadeClassifier，训练好的haar特征在OpenCV的安装目录即可找到，我使用了fronal_face,mcs_mouth,mcs_nose三个特征数据，分别对应脸、口、鼻区域检测。筛选时候会判断口鼻位置是否在面部，然后根据口鼻位置来决定胡子的位置。</p>
+
+<p>而最终选定的贴胡子位置区域，横轴(x)以鼻子为中心左侧一半宽度处，纵轴(y)口鼻正中间往下又1/4处；贴片高度固定为10，宽度约为嘴巴1.8倍(经验值)。</p>
+
+<pre><code>if(len(self.mouth) &gt; 0 and len(self.nose) &gt; 0):
+    width = self.mouth[0][2]*1.8
+    height = 10
+    x = self.nose[0][0] + self.nose[0][2]*0.5 - 0.5*width
+    t = 0.5*(self.nose[0][1] + self.mouth[0][1])+0.25*(self.nose[0][3] + self.mouth[0][3])
+    y = t - 0.5*height
+    return int(x),int(y),int(width),int(height)
+</code></pre>
+
+<h2>实时图像采集与传送</h2>
+
+<p>图像的采集采用了基于浏览器的方案，html5提供了getUserMedia()方法，可以方便地进行视频抓取，在获取了摄像头图片后，我们要实时往服务端发送，并获取贴图位置。这也是一种应答模式，使用http不间断地传送图像也可以实现，不过，对于这种客户端频繁更新数据请求的模式，websocket是更好的选择(
+<a href="https://blogs.windows.com/buildingapps/2016/03/14/when-to-use-a-http-call-instead-of-a-websocket-or-http-2-0/">When to use a HTTP call instead of a WebSocket (or HTTP 2.0)</a>)。</p>
+
+<p>一般来讲，webserver是不具备往client主动发数据的能力的(应答模式的短链接，回复即断掉当前链接)。websocket主要用于client－server需要维持长链接的情况——比如向client推送消息。不过，我们使用websocket的即时发送能力，将采集到的图像源源不断地发送给后端,而后端收到图图像后，使用上文中的检测算法计算出将要贴上胡子的区域，并回传给websocket client(浏览器)，浏览器根据收到的胡子位置，把胡子样式图片贴在图像的相应位置。</p>
+
+<p>websocket默认支持的二进制数据是blob的，我们需要把html canvas元素转化为blob对象，所以使用了<a href="https://github.com/blueimp/JavaScript-Canvas-to-Blob">JavaScript-Canvas-to-Blob</a>来做类型的转换。</p>
+
+<pre><code>//即时传图
+update = function() {
+    // 视频数据复制到画布中
+    ctx.drawImage(video, 0, 0, 320, 240);
+    // 转为blob 并发送给server
+    if(canvas.toBlob){
+        canvas.toBlob(function(blob) {
+            ws.send(blob);
+        }, 'image/jpeg');
+    }
+
+    // 贴胡子。openCvCoords为回传到贴图区域，mustache为选定的胡子图片
+    if(typeof(openCvCoords) != "undefined")
+    {
+        if(openCvCoords[0] != -1)
+        {
+            ctx.drawImage(mustache,openCvCoords[0], openCvCoords[1], openCvCoords[2], openCvCoords[3]);
+        }
+    }    
+}
+</code></pre>
+
+<h2>https改造</h2>
+
+<p>不过，完成所有代码编写并部署后，你会发现只能够在本地运行，因为通过http远程访问getUserMedia已经在较新的chrome版本中被<a href="https://sites.google.com/a/chromium.org/dev/Home/chromium-security/deprecating-powerful-features-on-insecure-origins">废弃</a>了，只有在https方式下才能继续使用这个特性。所以我们需要对站点进行适当改造，使其能够处理https请求。</p>
+
+<p>首先是全站资源的https化，对用使用的外部js，辛好现在cdn厂商提供了http与https与自适应三种方式，可以使用后两者替换掉http url即可。同时，实时数据传输，采用了websocket的解决方案，websocket提供了ws与wss两种协议，使用wss告诉websocket client side 使用https方式连接 server side。</p>
+
+<p>另外，还要证书的生成与签名(认证)。未认证的证书会被主流浏览器拦截，就想12306网站那样，提示用户不是私密连接。不过<a href="https://letsencrypt.org/">Let’s Encrypt</a>提供了一种廉价的认证方式，用户将证书上传认证后可获得三个月的免费认证，三月后可继续续约。我使用了<a href="https://github.com/diafygi/acme-tiny">acme-tiny</a>帮助生成认证证书</p>
+
+<p>最后是web 框架的https支持。基本上主流框架都提供了https支持，tornado通过开启ssl_options指定签名证书与生成证书的私钥。</p>
+
+<pre><code>http_server = tornado.httpserver.HTTPServer(Mustache(),ssl_options={
+    "certfile": os.path.join(os.path.abspath("cert/"), "chained.pem"),
+    "keyfile": os.path.join(os.path.abspath("cert/"), "domain.key"),
+    })
+</code></pre>
+
+<p>当使用了nginx作为反代的情况，配置nginx的ssl选项，client到nginx使用https，而nginx使用http访问上游webserver。</p>
+
+<h2>其他</h2>
+
+<p>附带<a href="https://github.com/tianyaqu/mustache.git">项目路径</a>，欢迎继续发挥。。。</p>
+
+<p><img src="/images/mustache_snapshot.png" title="性感小胡子" ></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用RNN自动生成域名]]></title>
+    <link href="http://tianyaqu.com/blog/2016/04/29/generating-good-domain-names-with-rnn/"/>
+    <updated>2016-04-29T19:31:34+08:00</updated>
+    <id>http://tianyaqu.com/blog/2016/04/29/generating-good-domain-names-with-rnn</id>
+    <content type="html"><![CDATA[<p>如果有很多猴子分别使用打印机瞎打字，什么时候能打出一篇莎士比亚的作品？
+好吧，我们不让猴子写巨著，给他一个简单的任务——帮我想出些不错的域名出来。域名已经是个非常饱和的市场了，
+四位以下域名已经全部被注册了，七八位又太长，五位六位或许能淘到些宝贝。可是仅仅五位域名的组合个数已经突破了六千万个(36<sup>5</sup>)，
+从里面挑出一个简直是大海捞针，更有人使用单词、拼音规则已经从里面筛选了一通。那么有没有精准一点的方法筛选呢？</p>
+
+<!--more-->
+
+
+<p>当然是可以的。借助于RNN，我们可以轻松地自动生成成千上万的候选域名。RNN是一种特殊的神经网络，适合处理具有序列属性的数据。
+Andrej Karpathy 在<a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>一文中
+介绍了一种 char-rnn 自动内容生成的方法。他将内容生成当作是序列预测问题，以一段文本作为输入序列，其对应的输出序列为原文本序列的移位序列，
+比如 &ldquo;hello world"设定上下文长度为4,则得到序列为"hell&rdquo;->&ldquo;ello&rdquo;, &ldquo;ello&rdquo;->&ldquo;llo &rdquo;&hellip; 从而获得了预测一个字符的能力。</p>
+
+<p>Karpathy 提供了一个基于python的mini实现，不过不是基于lstm，而是普通的rnn。网络结构中每个记忆单元含有两个隐含层，各层之间全连接，而不同的记忆单元共享权值。
+对每个输入都进行正向计算与反向传播并更新权重。如下图所示：</p>
+
+<p><img src="/images/char-rnn.png" title="char-rnn" ></p>
+
+<p>由于神经网络要求输入数据一致，所以需要对原数据进行调整，它以类似于词袋模型方法将每个字符向量化，将输入数据对齐。虽然Karpathy的方法基于字符，
+不过也可以将其扩充为word-based，方法也十分类似，直接统计文档中的word，将每个word向量化。后面的处理逻辑一致。</p>
+
+<p>本文边基于这个mini实现来进行网络训练。下一步要获取一批高质量域名数据，当然不存在这样的数据可供下载，我们退而求其次，可以收集一些知名公司的域名
+作为训练样本。我们选择了一个国内的黄页网站以及alexa的top500站点，从两个站点抓取所有的域名。这些站点的抓取比较简单，根据url的索引规律就可以很容易
+遍历所有的条目，使用类似for each ->fetch ->parse方式即可抓取。不过为了尝鲜，选择使用pyspider作为抓取工具。工具的安装配置不再本文的介绍范围，
+在管理界面新建一个任务，其配置为:</p>
+
+<pre><code>class Handler(BaseHandler):
+    crawl_config = {
+    }
+
+    @every(minutes=24 * 60)
+    def on_start(self):
+        self.crawl('http://www.qkankan.com/all/index.html', callback=self.index_page)
+
+    @config(age=10 * 24 * 60 * 60)
+    def index_page(self, response):
+        for each in response.doc('h2 &amp;gt; a').items():
+            if each.attr.href.find('qkan') &amp;gt; -1:
+                self.crawl(each.attr.href, callback=self.detail_page)
+        for each in response.doc('.next a').items():
+            self.crawl(each.attr.href, callback=self.index_page)
+
+    @config(priority=2)
+    def detail_page(self, response):
+        return {
+            "name":response.doc('h1').text(),
+            "domain":response.doc('#sitelogo a[href^=&amp;quot;http&amp;quot;]').attr.href,
+        }
+</code></pre>
+
+<p>同理配置Alexa :</p>
+
+<pre><code>class Handler(BaseHandler):
+    crawl_config = {
+    }
+
+    @every(minutes=24 * 60)
+    def on_start(self):
+        self.crawl('http://www.alexa.com/topsites', callback=self.index_page)
+
+    @config(age=10 * 24 * 60 * 60)
+    def index_page(self, response):
+        for each in response.doc('.desc-paragraph &amp;gt; a').items():
+            self.crawl(each.attr.href, callback=self.detail_page)
+        self.crawl(response.doc('.next').attr.href, callback=self.index_page)
+
+    @config(priority=2)
+    def detail_page(self, response):
+        return {
+            "name":response.doc('.compare-site &amp;gt; a').attr.href,
+            "domain":response.doc('.compare-site &amp;gt; a').text(),
+        }           
+</code></pre>
+
+<p>在pyspider配置界面导出json格式的结果，使用如下脚本解析出域名信息（去除www,com,org等前后缀）并输出到文件中.
+使用了tldextract的包来解析域名，结果导出到names.txt，每行记录一个域名。</p>
+
+<p><blockquote><p>strToDomain(&lsquo;domain.json&rsquo;,&lsquo;names.txt&rsquo;)<br/></p></blockquote></p>
+
+<pre><code>import json
+import tldextract
+def strToDomain(fileA,fileB):
+    with open(fileA,'r') as fr,open(fileB, 'w') as fw:
+        for line in fr.readlines():
+            record = json.loads(line)
+            domainStr = None
+            try:
+                domainStr = record['result']['domain']
+            except:
+                continue
+            if domainStr != None:
+                domainResult = tldextract.extract(domainStr)
+                fw.write(domainResult.domain + '\n')    
+</code></pre>
+
+<p>最终一共获取了四千左右域名,共43K大小。虽然数据量不够大，姑且一试。</p>
+
+<p>下文是一些自动生成的域名信息（剔除了四位以下八位以上），看起来似乎可以当上总经理出任CEO迎娶白富美走向人生巅峰呢。。。</p>
+
+<p><blockquote><p>molal maisal liansu mngath telmjd gopzort inquar huathe shmbora kinlink dalma konten careb entonga fatilow ibacks steque borgai hfesyen sarice indoy sicin akith rebat jobeglm newingg</p></blockquote></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[玩一把HMM的掌纹识别]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm/"/>
+    <updated>2015-05-15T22:13:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm</id>
+    <content type="html"><![CDATA[<p>上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。</p>
+
+<p>看到这个题目的人，如果对马尔科夫模型有所了解的话，一定会很奇怪，马尔科夫模型建立的两个关键要素是观测序列与状态转移，这怎么体现在掌纹上呢？</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>说起来，这个理论最早是从人脸识别上搬运过来的。将人脸图像从上到下分成若干个子块，这些子块自上而下依次组成观测序列，每个子块所蕴涵的信息被当作状态。这个状态可以这么理解，它是由人脸的生物特征，比如相互位置、颜色、形状等在统计意义上的抽象。也即是，认为“状态”蕴含了人脸的生物特征，但是具体蕴含哪些？有多大关联却并不作直接解释(如果你知道合理的解释，请务必指导我)。</p>
+
+<p>如此，对人脸图像进行切分，得到一系列的子块，作为观测序列。我们知道，马尔科夫模型有这么几个应用场景。</p>
+
+<pre><code>1.根据模型参数与观测序列，求观测序列出现的概率
+2.已知观测序，估计模型参数
+3.根据模型和观测序，求最可能的状态序列
+</code></pre>
+
+<p>首先，我们面临的是第二种问题。我们认为用马尔科夫模型可以描述切片序列的变化规律，根据这些切片序列推断模型参数，这是参数估计问题，也是个无监督学习过程，经常用Baum-Welch算法训练得到参数。</p>
+
+<p>然后是关键的一步。当新来的人脸图片时候，首先对其切片获得观测序列，利用第一步中获取的模型参数，计算其可能的状态及其似然值，作为分类的依据。这对应上述第三种问题，可以用维特比算法求解。</p>
+
+<h2>训练</h2>
+
+<p>掌纹识别即与人脸的识别方法完全相同，不过还有一些细节需要阐述下。由于马尔科夫模型的观测变量与状态变量是离散的，所以要找到一种方法将连续的“切片”离散化。</p>
+
+<p>矩阵的奇异值向量具有稳定性、位移不变、旋转不变等优良特性，可以用来很好的描述矩阵，所以选取它作为“切片”数据的特征。进一步，将这些特征使用k-means聚类，聚类的标号作为该切片的“状态”。用户需要自己决定状态数目，以及观测概率的分布数量。不过据一篇来自清华的论文"DSW Feature Based Hidden Marcov Model: An Application on Object Identification"的实验结果，状态在6-7时候效果较佳。</p>
+
+<h2>识别</h2>
+
+<p>按照训练一节，对每一个人训练出一套模型参数。对于新来的待识别图像，切片、奇异值分解、状态分类。分类使用欧几里德距离方式确定，根据它与不同分类的中心距离，取最近的作为类标号。这样便获得一个基于类标号的观测序列，将它代入各个用户模型分别计算其最大似然值(场景三)，取其最大似然值作为识别的结果。</p>
+
+<h2>实现</h2>
+
+<p>见我的 github repo <a href="https://github.com/tianyaqu/palm-identification-with-hmm">palm-identification-with-hmm</a></p>
+
+<h2>结果与改进</h2>
+
+<p>使用PolyU的<a href="http://www4.comp.polyu.edu.hk/~biometrics/">Palmprint Database</a>进行实验，为标准化的128*128图，省去了预处理过程。</p>
+
+<p>据实验结果，在4人的识别中，效果可以达到60-70%，人数再多效果就很快急剧下降，不忍直视。
+可从如下两个方面着手：</p>
+
+<p>1.模型训练时候的初始观测概率分布使用了随机值，导致结果会有跳动。可以考虑在不同初始值情况下，通过多次迭代找出最优的模型参数，后续不再训练。</p>
+
+<p>2.模型的可解释性。由于模型中的状态并没有直接对应的物理意义，颇有点类似神经网络的神经元个数的意味。进一步提高识别率需要与其他方法结合。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PCA and Its Applications]]></title>
+    <link href="http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications/"/>
+    <updated>2014-10-14T19:40:15+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications</id>
+    <content type="html"><![CDATA[<p>书接<a href="/blog/2014/04/10/seperate-a-sperable-filter/">上回</a>,讲一下PCA。
+PCA（Principal Components Analysis）,主成分分析。它是人脸识别、图像压缩中一项重要的工具技巧，作用是在高维（多属性）数据集中找到隐含的模式，利用这些隐含的模式来代表原来的高维数据，从而达到数据简化的目的。首先明确一点，PCA的数据集是无标签的，也就是无所谓分类，属于无监督学习，这一点跟LDA还是有区别的。</p>
+
+<p>对于PCA的原理，有两种解释，也就有两个数学推导。一是找到一个线性投影，使投影后的维数下降，且数据差异最大（保留原数据的多样性）;二是保证投影损失最小，即原数据点与投影后的数据点距离平方和最小。下面，介绍下一。</p>
+
+<!--more-->
+
+
+
+
+<h4>1.简述</h4>
+
+
+<p>数据的多样性在统计上的对应便是方差。假定我们找到了投影向量$u_{1}$，简单起见，它还是一单位向量,也即$u_{1}u_{1}^T = 1$.</p>
+
+
+<p>那么投影前后的方差为</p>
+
+
+<p>$$\frac{1}{N}\sum_{n=1}^N\left\{u_{1}^Tx_n-u_{1}^T\bar{x}\right\}^2 = u_{1}^TSu_1$$</p>
+
+
+<p><br>
+其中S为</p>
+
+<p>$$ S = \frac{1}{N}\sum_{n=1}^N(x_n - \bar{x})(x_n - \bar{x})^T $$</p>
+
+
+
+
+<p>在加上单位向量与其转置乘积为1的限定，考虑使用拉格朗日算子</p>
+
+
+<center>$$ U_{1}^TSu_1 + \lambda_1(1-u_{1}^Tu_1)$$</center>
+
+
+<p>对其求导，这样便成为一个线性代数上求特征根的问题：$Su_1 = \lambda_1(1-u_{1}^Tu_1)$ 。</p>
+
+
+<p>公式两边同时左乘以$u_{1}$,可以容易看出，$\lambda_1 = u_{1}^TSu_1$ 。</p>
+
+
+<p>所以当选择一个最大的特征值对应的是其最大的方差，此时对应的特征向量就被成为主成分。每个特征特征向量为D × 1的列向量。选定K（K&lt;=D）个较大特征值对应的特征向量U（D × K），作为投影向量。那么原数据经过投影后的数据便为 $X' = X × U$。</p>
+
+<p>总结一下，PCA的实施步骤为：</p>
+
+<pre><code>1.数据集减去平均值
+2.计算协方差矩阵
+3.求得协方差矩阵的特征值与特征向量
+4.对特征值从大到小排序，选定要使用的特征值与特征向量
+5.生成最终（降维后）数据
+</code></pre>
+
+<h4>2.高维情况</h4>
+
+
+<p>就这样了么？理论上是可行的。可是对协方差矩阵求特征解的时候，会有难度。因为大多数情况下，数据的维度远远比数据的数量大，即 N << D。特别对于图像处理而言，一个像素对应着一个维度，因此维度会特别大，协方差矩阵也会随之膨大(D×D)，导致计算量激增(协方差矩阵的计算复杂度为$O(D^{3})$。这里有个trick,将原数据转置，这样将数据的列转换数据的数目N，对其进行特征值求解，然后将特征向量转化为原矩阵的特征向量。Bishop 的《Pattern Recognition and Machine Learning》给出了证明。</p>
+
+
+<p>给出一数据集X（已经减除平均值），其大小为（N × D，N &lt;&lt; D）。协方差矩阵即为 $S = N^{-1}X^{T}X$,根据上面求PCA的步骤，计算协方差矩阵的特征值，便有：</p>
+
+<p>$N^{-1}X^{T}Xu_{i} = {\lambda}_{i}u_i $ </p>
+
+
+<p>稍微作下变形。两边同时左乘$X$,则有
+$$N^{-1}XX<sup>T</sup>(Xu<em>{i}) = \lambda</em>{i}(Xu_{i})$$
+注意到，$XX<sup>T</sup>$是矩阵$X<sup>T</sup>$协方差的表达。这是原数据的转置的协方差矩，大小N × N。对其分解，得到特征向量$v_i = Xu_i$
+同时，对上式两边再次左乘$X<sup>T</sup>$,有</p>
+
+<p>$$(N^{-1}X<sup>TX</sup>)(X<sup>Tv</sup>_i) = \lambda_{i}(X<sup>Tv</sup>_i)$$</p>
+
+<p>这不正是原始数据的分解矩阵么？！，可以看出 $X<sup>Tv</sup>_i$ 正是其特征向量，它由原数据的转置$X<sup>T</sup>$线性变换而来！</p>
+
+<p>$$u_i = \frac{1}{(N\lambda_{i})^{&frac12;}}X<sup>Tv</sup>_i$$</p>
+
+<p>即利用转置后的特征向量$v_i$,进行某种线性变换，获得的结果与本身的特征向量相同。可是，却在特征分解的时候减少了计算量。</p>
+
+
+
+
+<h4>3.人脸识别</h4>
+
+
+
+
+<p>2中的知识其实已经说的很明白了，它解决了高维情况下矩阵分解问题，处理图像起来也就得心应手，一个简单的人脸鉴别便可做了。
+步骤大致如下：</p>
+
+
+
+
+<p><p>1.准备一个人脸不同照片，图片的大小务必一致。可以从网上的人脸库中提取一些;<br/>
+<p>2.加载训练图片，获得原始数据X(N × D)。根据2中步骤，获得K个投影向量$u_i$;
+<p>3.加载新图片，计算投影后向量X'(1 × K);
+<p>4.计算与训练图片的投影距离，平均距离在阈值内则认为是该类。</p>
+]]></content>
+  </entry>
+  
+</feed>
