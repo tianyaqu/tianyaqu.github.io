@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Machine Learning | When Winter Fell]]></title>
   <link href="http://tianyaqu.com/blog/categories/machine-learning/atom.xml" rel="self"/>
   <link href="http://tianyaqu.com/"/>
-  <updated>2016-11-13T17:11:46+08:00</updated>
+  <updated>2016-11-13T17:38:56+08:00</updated>
   <id>http://tianyaqu.com/</id>
   <author>
     <name><![CDATA[Alex]]></name>
@@ -97,7 +97,7 @@ update = function() {
 
 <h2>其他</h2>
 
-<p>附带<a href="https://github.com/tianyaqu/mustache.git">项目路径</a>，欢迎继续发挥。。。</p>
+<p><a href="https://mustache.tianyaqu.com/">demo</a>,感谢腾讯云提供的云主机.<a href="https://github.com/tianyaqu/mustache.git">项目路径</a>，欢迎继续发挥。。。</p>
 
 <p><img src="/images/mustache_snapshot.png" title="性感小胡子" ></p>
 ]]></content>
