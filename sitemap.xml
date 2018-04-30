@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://tianyaqu.com/blog/2016/11/13/put-mustache-on-your-face/</loc>
+<lastmod>2016-11-13T10:45:35+08:00</lastmod>
+</url>
+<url>
 <loc>http://tianyaqu.com/blog/2016/04/29/generating-good-domain-names-with-rnn/</loc>
 <lastmod>2016-04-29T19:31:34+08:00</lastmod>
 </url>
@@ -79,6 +83,9 @@
 <url>
 <loc>http://tianyaqu.com/blog/2014/01/11/listen-to-the-air/</loc>
 <lastmod>2014-01-11T01:59:40+08:00</lastmod>
+</url>
+<url>
+<loc>http://tianyaqu.com/2016-11-13-put-mustache-on-your-face.html</loc>
 </url>
 <url>
 <loc>http://tianyaqu.com/</loc>
