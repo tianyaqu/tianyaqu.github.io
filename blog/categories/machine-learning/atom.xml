@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Machine Learning | When Winter Fell]]></title>
+  <link href="http://tianyaqu.com/blog/categories/machine-learning/atom.xml" rel="self"/>
+  <link href="http://tianyaqu.com/"/>
+  <updated>2018-04-30T13:02:42+08:00</updated>
+  <id>http://tianyaqu.com/</id>
+  <author>
+    <name><![CDATA[Alex]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用RNN自动生成域名]]></title>
+    <link href="http://tianyaqu.com/blog/2016/04/29/generating-good-domain-names-with-rnn/"/>
+    <updated>2016-04-29T19:31:34+08:00</updated>
+    <id>http://tianyaqu.com/blog/2016/04/29/generating-good-domain-names-with-rnn</id>
+    <content type="html"><![CDATA[<p>如果有很多猴子分别使用打印机瞎打字，什么时候能打出一篇莎士比亚的作品？
+好吧，我们不让猴子写巨著，给他一个简单的任务——帮我想出些不错的域名出来。域名已经是个非常饱和的市场了，
+四位以下域名已经全部被注册了，七八位又太长，五位六位或许能淘到些宝贝。可是仅仅五位域名的组合个数已经突破了六千万个(36<sup>5</sup>)，
+从里面挑出一个简直是大海捞针，更有人使用单词、拼音规则已经从里面筛选了一通。那么有没有精准一点的方法筛选呢？</p>
+
+<!--more-->
+
+
+<p>当然是可以的。借助于RNN，我们可以轻松地自动生成成千上万的候选域名。RNN是一种特殊的神经网络，适合处理具有序列属性的数据。
+Andrej Karpathy 在<a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a>一文中
+介绍了一种 char-rnn 自动内容生成的方法。他将内容生成当作是序列预测问题，以一段文本作为输入序列，其对应的输出序列为原文本序列的移位序列，
+比如 &ldquo;hello world"设定上下文长度为4,则得到序列为"hell&rdquo;->&ldquo;ello&rdquo;, &ldquo;ello&rdquo;->&ldquo;llo &rdquo;&hellip; 从而获得了预测一个字符的能力。</p>
+
+<p>Karpathy 提供了一个基于python的mini实现，不过不是基于lstm，而是普通的rnn。网络结构中每个记忆单元含有两个隐含层，各层之间全连接，而不同的记忆单元共享权值。
+对每个输入都进行正向计算与反向传播并更新权重。如下图所示：</p>
+
+<p><img src="/images/char-rnn.png" title="char-rnn" ></p>
+
+<p>由于神经网络要求输入数据一致，所以需要对原数据进行调整，它以类似于词袋模型方法将每个字符向量化，将输入数据对齐。虽然Karpathy的方法基于字符，
+不过也可以将其扩充为word-based，方法也十分类似，直接统计文档中的word，将每个word向量化。后面的处理逻辑一致。</p>
+
+<p>本文边基于这个mini实现来进行网络训练。下一步要获取一批高质量域名数据，当然不存在这样的数据可供下载，我们退而求其次，可以收集一些知名公司的域名
+作为训练样本。我们选择了一个国内的黄页网站以及alexa的top500站点，从两个站点抓取所有的域名。这些站点的抓取比较简单，根据url的索引规律就可以很容易
+遍历所有的条目，使用类似for each ->fetch ->parse方式即可抓取。不过为了尝鲜，选择使用pyspider作为抓取工具。工具的安装配置不再本文的介绍范围，
+在管理界面新建一个任务，其配置为:</p>
+
+<pre><code>class Handler(BaseHandler):
+    crawl_config = {
+    }
+
+    @every(minutes=24 * 60)
+    def on_start(self):
+        self.crawl('http://www.qkankan.com/all/index.html', callback=self.index_page)
+
+    @config(age=10 * 24 * 60 * 60)
+    def index_page(self, response):
+        for each in response.doc('h2 &amp;gt; a').items():
+            if each.attr.href.find('qkan') &amp;gt; -1:
+                self.crawl(each.attr.href, callback=self.detail_page)
+        for each in response.doc('.next a').items():
+            self.crawl(each.attr.href, callback=self.index_page)
+
+    @config(priority=2)
+    def detail_page(self, response):
+        return {
+            "name":response.doc('h1').text(),
+            "domain":response.doc('#sitelogo a[href^=&amp;quot;http&amp;quot;]').attr.href,
+        }
+</code></pre>
+
+<p>同理配置Alexa :</p>
+
+<pre><code>class Handler(BaseHandler):
+    crawl_config = {
+    }
+
+    @every(minutes=24 * 60)
+    def on_start(self):
+        self.crawl('http://www.alexa.com/topsites', callback=self.index_page)
+
+    @config(age=10 * 24 * 60 * 60)
+    def index_page(self, response):
+        for each in response.doc('.desc-paragraph &amp;gt; a').items():
+            self.crawl(each.attr.href, callback=self.detail_page)
+        self.crawl(response.doc('.next').attr.href, callback=self.index_page)
+
+    @config(priority=2)
+    def detail_page(self, response):
+        return {
+            "name":response.doc('.compare-site &amp;gt; a').attr.href,
+            "domain":response.doc('.compare-site &amp;gt; a').text(),
+        }           
+</code></pre>
+
+<p>在pyspider配置界面导出json格式的结果，使用如下脚本解析出域名信息（去除www,com,org等前后缀）并输出到文件中.
+使用了tldextract的包来解析域名，结果导出到names.txt，每行记录一个域名。</p>
+
+<p><blockquote><p>strToDomain(&lsquo;domain.json&rsquo;,&lsquo;names.txt&rsquo;)<br/></p></blockquote></p>
+
+<pre><code>import json
+import tldextract
+def strToDomain(fileA,fileB):
+    with open(fileA,'r') as fr,open(fileB, 'w') as fw:
+        for line in fr.readlines():
+            record = json.loads(line)
+            domainStr = None
+            try:
+                domainStr = record['result']['domain']
+            except:
+                continue
+            if domainStr != None:
+                domainResult = tldextract.extract(domainStr)
+                fw.write(domainResult.domain + '\n')    
+</code></pre>
+
+<p>最终一共获取了四千左右域名,共43K大小。虽然数据量不够大，姑且一试。</p>
+
+<p>下文是一些自动生成的域名信息（剔除了四位以下八位以上），看起来似乎可以当上总经理出任CEO迎娶白富美走向人生巅峰呢。。。</p>
+
+<p><blockquote><p>molal maisal liansu mngath telmjd gopzort inquar huathe shmbora kinlink dalma konten careb entonga fatilow ibacks steque borgai hfesyen sarice indoy sicin akith rebat jobeglm newingg</p></blockquote></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[玩一把HMM的掌纹识别]]></title>
+    <link href="http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm/"/>
+    <updated>2015-05-15T22:13:00+08:00</updated>
+    <id>http://tianyaqu.com/blog/2015/05/15/palm-identification-with-hmm</id>
+    <content type="html"><![CDATA[<p>上周末受朋友所托，帮他做点毕业设计的东东，俗话说“论文已写好，还差个码农鸟”，此事便定下了。论文的方向是用马尔科夫模型(HMM,Hidden Markov Model)识别掌纹(准确来讲是用户认证)。之前在系里的无人车项目中应用了马尔科夫模型，这刚好也是我的毕业选题，估计这也是他找我的原因。</p>
+
+<p>看到这个题目的人，如果对马尔科夫模型有所了解的话，一定会很奇怪，马尔科夫模型建立的两个关键要素是观测序列与状态转移，这怎么体现在掌纹上呢？</p>
+
+<!--more-->
+
+
+<h2>概述</h2>
+
+<p>说起来，这个理论最早是从人脸识别上搬运过来的。将人脸图像从上到下分成若干个子块，这些子块自上而下依次组成观测序列，每个子块所蕴涵的信息被当作状态。这个状态可以这么理解，它是由人脸的生物特征，比如相互位置、颜色、形状等在统计意义上的抽象。也即是，认为“状态”蕴含了人脸的生物特征，但是具体蕴含哪些？有多大关联却并不作直接解释(如果你知道合理的解释，请务必指导我)。</p>
+
+<p>如此，对人脸图像进行切分，得到一系列的子块，作为观测序列。我们知道，马尔科夫模型有这么几个应用场景。</p>
+
+<pre><code>1.根据模型参数与观测序列，求观测序列出现的概率
+2.已知观测序，估计模型参数
+3.根据模型和观测序，求最可能的状态序列
+</code></pre>
+
+<p>首先，我们面临的是第二种问题。我们认为用马尔科夫模型可以描述切片序列的变化规律，根据这些切片序列推断模型参数，这是参数估计问题，也是个无监督学习过程，经常用Baum-Welch算法训练得到参数。</p>
+
+<p>然后是关键的一步。当新来的人脸图片时候，首先对其切片获得观测序列，利用第一步中获取的模型参数，计算其可能的状态及其似然值，作为分类的依据。这对应上述第三种问题，可以用维特比算法求解。</p>
+
+<h2>训练</h2>
+
+<p>掌纹识别即与人脸的识别方法完全相同，不过还有一些细节需要阐述下。由于马尔科夫模型的观测变量与状态变量是离散的，所以要找到一种方法将连续的“切片”离散化。</p>
+
+<p>矩阵的奇异值向量具有稳定性、位移不变、旋转不变等优良特性，可以用来很好的描述矩阵，所以选取它作为“切片”数据的特征。进一步，将这些特征使用k-means聚类，聚类的标号作为该切片的“状态”。用户需要自己决定状态数目，以及观测概率的分布数量。不过据一篇来自清华的论文"DSW Feature Based Hidden Marcov Model: An Application on Object Identification"的实验结果，状态在6-7时候效果较佳。</p>
+
+<h2>识别</h2>
+
+<p>按照训练一节，对每一个人训练出一套模型参数。对于新来的待识别图像，切片、奇异值分解、状态分类。分类使用欧几里德距离方式确定，根据它与不同分类的中心距离，取最近的作为类标号。这样便获得一个基于类标号的观测序列，将它代入各个用户模型分别计算其最大似然值(场景三)，取其最大似然值作为识别的结果。</p>
+
+<h2>实现</h2>
+
+<p>见我的 github repo <a href="https://github.com/tianyaqu/palm-identification-with-hmm">palm-identification-with-hmm</a></p>
+
+<h2>结果与改进</h2>
+
+<p>使用PolyU的<a href="http://www4.comp.polyu.edu.hk/~biometrics/">Palmprint Database</a>进行实验，为标准化的128*128图，省去了预处理过程。</p>
+
+<p>据实验结果，在4人的识别中，效果可以达到60-70%，人数再多效果就很快急剧下降，不忍直视。
+可从如下两个方面着手：</p>
+
+<p>1.模型训练时候的初始观测概率分布使用了随机值，导致结果会有跳动。可以考虑在不同初始值情况下，通过多次迭代找出最优的模型参数，后续不再训练。</p>
+
+<p>2.模型的可解释性。由于模型中的状态并没有直接对应的物理意义，颇有点类似神经网络的神经元个数的意味。进一步提高识别率需要与其他方法结合。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PCA and Its Applications]]></title>
+    <link href="http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications/"/>
+    <updated>2014-10-14T19:40:15+08:00</updated>
+    <id>http://tianyaqu.com/blog/2014/10/14/pca-and-its-applications</id>
+    <content type="html"><![CDATA[<p>书接<a href="/blog/2014/04/10/seperate-a-sperable-filter/">上回</a>,讲一下PCA。
+PCA（Principal Components Analysis）,主成分分析。它是人脸识别、图像压缩中一项重要的工具技巧，作用是在高维（多属性）数据集中找到隐含的模式，利用这些隐含的模式来代表原来的高维数据，从而达到数据简化的目的。首先明确一点，PCA的数据集是无标签的，也就是无所谓分类，属于无监督学习，这一点跟LDA还是有区别的。</p>
+
+<p>对于PCA的原理，有两种解释，也就有两个数学推导。一是找到一个线性投影，使投影后的维数下降，且数据差异最大（保留原数据的多样性）;二是保证投影损失最小，即原数据点与投影后的数据点距离平方和最小。下面，介绍下一。</p>
+
+<!--more-->
+
+
+
+
+<h4>1.简述</h4>
+
+
+<p>数据的多样性在统计上的对应便是方差。假定我们找到了投影向量$u_{1}$，简单起见，它还是一单位向量,也即$u_{1}u_{1}^T = 1$.</p>
+
+
+<p>那么投影前后的方差为</p>
+
+
+<p>$$\frac{1}{N}\sum_{n=1}^N\left\{u_{1}^Tx_n-u_{1}^T\bar{x}\right\}^2 = u_{1}^TSu_1$$</p>
+
+
+<p><br>
+其中S为</p>
+
+<p>$$ S = \frac{1}{N}\sum_{n=1}^N(x_n - \bar{x})(x_n - \bar{x})^T $$</p>
+
+
+
+
+<p>在加上单位向量与其转置乘积为1的限定，考虑使用拉格朗日算子</p>
+
+
+<center>$$ U_{1}^TSu_1 + \lambda_1(1-u_{1}^Tu_1)$$</center>
+
+
+<p>对其求导，这样便成为一个线性代数上求特征根的问题：$Su_1 = \lambda_1(1-u_{1}^Tu_1)$ 。</p>
+
+
+<p>公式两边同时左乘以$u_{1}$,可以容易看出，$\lambda_1 = u_{1}^TSu_1$ 。</p>
+
+
+<p>所以当选择一个最大的特征值对应的是其最大的方差，此时对应的特征向量就被成为主成分。每个特征特征向量为D × 1的列向量。选定K（K&lt;=D）个较大特征值对应的特征向量U（D × K），作为投影向量。那么原数据经过投影后的数据便为 $X' = X × U$。</p>
+
+<p>总结一下，PCA的实施步骤为：</p>
+
+<pre><code>1.数据集减去平均值
+2.计算协方差矩阵
+3.求得协方差矩阵的特征值与特征向量
+4.对特征值从大到小排序，选定要使用的特征值与特征向量
+5.生成最终（降维后）数据
+</code></pre>
+
+<h4>2.高维情况</h4>
+
+
+<p>就这样了么？理论上是可行的。可是对协方差矩阵求特征解的时候，会有难度。因为大多数情况下，数据的维度远远比数据的数量大，即 N << D。特别对于图像处理而言，一个像素对应着一个维度，因此维度会特别大，协方差矩阵也会随之膨大(D×D)，导致计算量激增(协方差矩阵的计算复杂度为$O(D^{3})$。这里有个trick,将原数据转置，这样将数据的列转换数据的数目N，对其进行特征值求解，然后将特征向量转化为原矩阵的特征向量。Bishop 的《Pattern Recognition and Machine Learning》给出了证明。</p>
+
+
+<p>给出一数据集X（已经减除平均值），其大小为（N × D，N &lt;&lt; D）。协方差矩阵即为 $S = N^{-1}X^{T}X$,根据上面求PCA的步骤，计算协方差矩阵的特征值，便有：</p>
+
+<p>$N^{-1}X^{T}Xu_{i} = {\lambda}_{i}u_i $ </p>
+
+
+<p>稍微作下变形。两边同时左乘$X$,则有
+$$N^{-1}XX<sup>T</sup>(Xu<em>{i}) = \lambda</em>{i}(Xu_{i})$$
+注意到，$XX<sup>T</sup>$是矩阵$X<sup>T</sup>$协方差的表达。这是原数据的转置的协方差矩，大小N × N。对其分解，得到特征向量$v_i = Xu_i$
+同时，对上式两边再次左乘$X<sup>T</sup>$,有</p>
+
+<p>$$(N^{-1}X<sup>TX</sup>)(X<sup>Tv</sup>_i) = \lambda_{i}(X<sup>Tv</sup>_i)$$</p>
+
+<p>这不正是原始数据的分解矩阵么？！，可以看出 $X<sup>Tv</sup>_i$ 正是其特征向量，它由原数据的转置$X<sup>T</sup>$线性变换而来！</p>
+
+<p>$$u_i = \frac{1}{(N\lambda_{i})^{&frac12;}}X<sup>Tv</sup>_i$$</p>
+
+<p>即利用转置后的特征向量$v_i$,进行某种线性变换，获得的结果与本身的特征向量相同。可是，却在特征分解的时候减少了计算量。</p>
+
+
+
+
+<h4>3.人脸识别</h4>
+
+
+
+
+<p>2中的知识其实已经说的很明白了，它解决了高维情况下矩阵分解问题，处理图像起来也就得心应手，一个简单的人脸鉴别便可做了。
+步骤大致如下：</p>
+
+
+
+
+<p><p>1.准备一个人脸不同照片，图片的大小务必一致。可以从网上的人脸库中提取一些;<br/>
+<p>2.加载训练图片，获得原始数据X(N × D)。根据2中步骤，获得K个投影向量$u_i$;
+<p>3.加载新图片，计算投影后向量X'(1 × K);
+<p>4.计算与训练图片的投影距离，平均距离在阈值内则认为是该类。</p>
+]]></content>
+  </entry>
+  
+</feed>
